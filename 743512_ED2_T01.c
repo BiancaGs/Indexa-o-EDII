@@ -137,6 +137,8 @@ void imprimirSecundario(Is* iproduct, Is* ibrand, Ir* icategory, Isf *iprice, in
 
 void gerarChave(Produto * Novo);
 
+void Inserir(Produto*Novo);
+
 /*-----------------------*/
 
 
@@ -151,7 +153,7 @@ int main(){
 		nregistros = carregar_arquivo();
 
 	/*----------*/
-	printf("%d\n", nregistros);
+	// printf("%d\n", nregistros);
 	/*----------*/
 
 
@@ -192,6 +194,7 @@ int main(){
 		exit(1);
 	}
 
+	Produto Novo;
 	/* Execução do programa */
 	int opcao = 0;
 	while(1)
@@ -200,7 +203,7 @@ int main(){
 		switch(opcao)
 		{
 			case 1:
-				
+				ler_entrada(0, &Novo);
 			break;
 			case 2:
 				/*alterar desconto*/
@@ -400,36 +403,8 @@ void criar_iprimary(Ip *indice_primario, int * nregistros){
 	for(int i = 0; i< (*nregistros); i++){
 
 		indice_primario[i].rrn = i; 
-
-		strcpy(indice_primario[i].pk, recuperar_registro(i).pk);
-
-		// Produto Auxiliar = recuperar_registro(i); 
-
-		// indice_primario[i].pk = Auxiliar.pk
-
-		// //Duas primeiras letras do NOME
-		// indice_primario[i].pk[0] = Auxiliar.nome[0];
-		// indice_primario[i].pk[1] = Auxiliar.nome[1];
-
-		// //Duas primeiras letras da MARCA
-		// indice_primario[i].pk[2] = Auxiliar.marca[0];
-		// indice_primario[i].pk[3] = Auxiliar.marca[1];
 		
-		// //Dia e mês da DATA DE REGISTRO
-		// indice_primario[i].pk[4] = Auxiliar.data[0];
-		// indice_primario[i].pk[5] = Auxiliar.data[1];
-		// indice_primario[i].pk[6] = Auxiliar.data[3];
-		// indice_primario[i].pk[7] = Auxiliar.data[4];
-
-		// //ANO de LANÇAMENTO
-		// indice_primario[i].pk[8] = Auxiliar.ano[0];
-		// indice_primario[i].pk[9] = Auxiliar.ano[1];
-
-
-		/*Teste*/
-		// printf("\n%s\n", indice_primario[i].pk);
-		// printf("\n%s\n", recuperar_registro(i).pk);
-		
+		strcpy(indice_primario[i].pk, recuperar_registro(i).pk);	
 	}
 
 }
@@ -439,6 +414,7 @@ void ler_entrada(char * registro, Produto *novo){
 
 	//Código - NÃO é inserido pelo usuário 
 	// char pk[TAM_PRIMARY_KEY];
+	// gerarChave(novo);
 
 	/*-----------------------*/
 
@@ -448,12 +424,13 @@ void ler_entrada(char * registro, Produto *novo){
 	
 	//Nome do Produto ou Modelo
 	// char Nome[TAM_NOME];
-	scanf("%[^\n]s", novo->nome);
 	
+	scanf("%[^\n]s", novo->nome);
+	getchar();
 	//Marca
 	// char Marca[TAM_MARCA];
 	scanf("%[^\n]s", novo->marca);
-
+	getchar();
 	/*-----------------------*/
 
 	/* CAMPOS DE TAMANHO FIXO */
@@ -461,27 +438,35 @@ void ler_entrada(char * registro, Produto *novo){
 	//Data de Registro
 	// char Data[TAM_DATA];	/* DD/MM/AAAA */
 	scanf("%[^\n]s", novo->data);
-
+	getchar();
 	//Ano de Lançamento
 	// char Ano[TAM_ANO];
 	scanf("%[^\n]s", novo->ano);
-
+	getchar();
 	//Preço-Base
 	// char Preço[TAM_PRECO];
 	scanf("%[^\n]s", novo->preco);
-
+	getchar();
 	//Desconto
 	// char Desconto[TAM_DESCONTO];
 	scanf("%[^\n]s", novo->desconto);
-
+	getchar();
 	//Categorias
 	// char Categoria[TAM_CATEGORIA];
 	scanf("%[^\n]s", novo->categoria);
-
+	getchar();
 	/*-----------------------*/
 	
 	Inserir(novo);
 }
 
-/* ---------------------------------------------- */
+void Inserir(Produto * Novo){
 
+	//Registro Auxiliar
+	char rAuxiliar[TAM_REGISTRO];
+
+	sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
+
+}
+
+/* ---------------------------------------------- */
