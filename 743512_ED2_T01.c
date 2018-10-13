@@ -123,8 +123,6 @@ void ler_entrada(char * registro, Produto *novo);
 /* Rotina para impressao de indice secundario */
 void imprimirSecundario(Is* iproduct, Is* ibrand, Ir* icategory, Isf *iprice, int nregistros, int ncat);
 
-void gerarChave(Produto * Novo);
-
 /*-----------------------*/
 
 /* Índice Simples */
@@ -137,6 +135,7 @@ void gerarChave(Produto * Novo);
 /* Lista Invertida */
 // void Criar_iCategory ();
 
+void gerarChave(Produto * Novo);
 
 /*-----------------------*/
 
@@ -395,20 +394,17 @@ void gerarChave(Produto * Novo){
 /* (Re)faz o índice respectivo */
 void criar_iprimary(Ip *indice_primario, int * nregistros){
 
-	/*	A chave primária IPRIMARY será criada a partir da junção das duas primeiras letras do NOME DO PRODUTO(MARCA), das duas primeiras letras da MARCA, do dia e do mês da DATA DE REGISTRO e do ANO de LANÇAMENTO 
-		Para que seja possível gerar a chave primária, primeiro precisamos 
-	separar os campos, para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado */
+	/*	A chave primária IPRIMARY será criada a partir da junção das duas primeiras letras do NOME DO PRODUTO(MARCA), das duas primeiras letras da MARCA, do dia e do mês da DATA DE REGISTRO e do ANO de LANÇAMENTO.
+	Para que seja possível gerar a chave primária, precisamos demarcar os campos, para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
 
 	for(int i = 0; i< (*nregistros); i++){
 
-		//int i = *nregistros;
-
 		indice_primario[i].rrn = i; 
 
-		Produto Auxiliar = recuperar_registro(i); 
+		strcpy(indice_primario[i].pk, recuperar_registro(i).pk);
 
-		strcpy(indice_primario[i].pk, Auxiliar.pk);
-		
+		// Produto Auxiliar = recuperar_registro(i); 
+
 		// indice_primario[i].pk = Auxiliar.pk
 
 		// //Duas primeiras letras do NOME
@@ -429,8 +425,11 @@ void criar_iprimary(Ip *indice_primario, int * nregistros){
 		// indice_primario[i].pk[8] = Auxiliar.ano[0];
 		// indice_primario[i].pk[9] = Auxiliar.ano[1];
 
-		// printf("%s", indice_primario[i].pk);
 
+		/*Teste*/
+		// printf("\n%s\n", indice_primario[i].pk);
+		// printf("\n%s\n", recuperar_registro(i).pk);
+		
 	}
 
 }
@@ -438,7 +437,7 @@ void criar_iprimary(Ip *indice_primario, int * nregistros){
 /* Realiza os scanfs na struct Produto */
 void ler_entrada(char * registro, Produto *novo){
 
-	//Código - NÃO é inserida pelo usuário 
+	//Código - NÃO é inserido pelo usuário 
 	// char pk[TAM_PRIMARY_KEY];
 
 	/*-----------------------*/
@@ -477,9 +476,12 @@ void ler_entrada(char * registro, Produto *novo){
 
 	//Categorias
 	// char Categoria[TAM_CATEGORIA];
+	scanf("%[^\n]s", novo->categoria);
 
 	/*-----------------------*/
 	
+	Inserir(novo);
 }
 
 /* ---------------------------------------------- */
+
