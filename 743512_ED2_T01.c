@@ -195,6 +195,7 @@ int main(){
 	}
 
 	Produto Novo;
+
 	/* Execução do programa */
 	int opcao = 0;
 	while(1)
@@ -204,6 +205,9 @@ int main(){
 		{
 			case 1:
 				ler_entrada(0, &Novo);
+				nregistros++;
+				criar_iprimary(iprimary, &nregistros);
+		
 			break;
 			case 2:
 				/*alterar desconto*/
@@ -456,7 +460,8 @@ void ler_entrada(char * registro, Produto *novo){
 	scanf("%[^\n]s", novo->categoria);
 	getchar();
 	/*-----------------------*/
-	
+
+		
 	Inserir(novo);
 }
 
@@ -466,6 +471,21 @@ void Inserir(Produto * Novo){
 	char rAuxiliar[TAM_REGISTRO];
 
 	sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
+
+	//Precisamos obter o TAMANHO do REGISTRO AUXILIAR (rAuxiliar) para sabermos quantos "bytes" faltam para preencher totalmento o REGISTRO.
+	int Tamanho = strlen(rAuxiliar);
+
+	// printf("\n Tamanho = %d\n", Tamanho);
+
+	//Preenchendo o REGISTRO por completo (192bytes)
+	for(int i = Tamanho; Tamanho < TAM_REGISTRO; i++)
+		rAuxiliar[i] = '#';
+
+	// printf("\n Registro: %s \n", rAuxiliar);
+
+	strcat(ARQUIVO, rAuxiliar);
+
+	// printf("\n%s\n", ARQUIVO);
 
 }
 
