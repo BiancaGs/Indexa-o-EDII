@@ -126,7 +126,7 @@ void imprimirSecundario(Is* iproduct, Is* ibrand, Ir* icategory, Isf *iprice, in
 /*-----------------------*/
 
 /* Índice Simples */
-// void Criar_iProduct ();
+void Criar_iProduct (Is* iProduct, int * nRegistros );
 
 // void Criar_iBrand ();
 
@@ -207,6 +207,7 @@ int main(){
 				ler_entrada(0, &Novo);
 				nregistros++;
 				criar_iprimary(iprimary, &nregistros);
+				Criar_iProduct(iproduct, &nregistros);
 		
 			break;
 			case 2:
@@ -411,6 +412,17 @@ void criar_iprimary(Ip *indice_primario, int * nregistros){
 		strcpy(indice_primario[i].pk, recuperar_registro(i).pk);	
 	}
 
+}
+
+void Criar_iProduct (Is* iProduct, int * nRegistros ){
+
+	for(int i = 0; i < (*nRegistros); i++){
+		
+		strcpy(iProduct[i].pk, recuperar_registro(i).pk);
+
+		strcpy(iProduct[i].string, recuperar_registro(i).nome); 
+
+	}
 }
 
 /* Realiza os scanfs na struct Produto */
