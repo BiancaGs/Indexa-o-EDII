@@ -531,14 +531,13 @@ void ler_entrada(char * registro, Produto *novo){
 	getchar();
 	/*-----------------------*/
 
-		
 	Inserir(novo);
 }
 
 void Inserir(Produto * Novo){
 
 	//Registro Auxiliar
-	char rAuxiliar[TAM_REGISTRO];
+	char rAuxiliar[193];
 
 	sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
 
@@ -547,11 +546,15 @@ void Inserir(Produto * Novo){
 
 	// printf("\n Tamanho = %d\n", Tamanho);
 
-	//Preenchendo o REGISTRO por completo (192bytes)
-	for(int i = Tamanho; Tamanho < TAM_REGISTRO-2; i++)
-		rAuxiliar[i] = '#';
 
-	printf("%d", strlen(rAuxiliar));
+	int i;
+	//Preenchendo o REGISTRO por completo (192bytes)
+	for(i = Tamanho; i < 192; i++){
+		// printf("%d ", i);
+		rAuxiliar[i] = '#';
+	}
+
+	// printf("%d", strlen(rAuxiliar));
 	// printf("\n Registro: %s \n", rAuxiliar);
 
 	strcat(ARQUIVO, rAuxiliar);
