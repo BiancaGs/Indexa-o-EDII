@@ -115,7 +115,7 @@ int exibir_registro(int rrn, char com_desconto);
 Produto recuperar_registro(int rrn);
 
 /* (Re)faz o índice respectivo */
-void criar_iprimary(Ip *indice_primario, int * nregistros);
+void Criar_iPrimary(Ip *indice_primario, int * nregistros);
 
 /* Realiza os scanfs na struct Produto */
 void ler_entrada(char * registro, Produto *novo);
@@ -164,7 +164,7 @@ int main(){
 		exit(1);
 	}
 
-	criar_iprimary(iprimary, &nregistros);
+	Criar_iPrimary(iprimary, &nregistros);
 
 	/*Alocar e criar índices secundários*/
 
@@ -206,7 +206,7 @@ int main(){
 			case 1:
 				ler_entrada(0, &Novo);
 				nregistros++;
-				criar_iprimary(iprimary, &nregistros);
+				Criar_iPrimary(iprimary, &nregistros);
 				Criar_iProduct(iproduct, &nregistros);
 				Criar_iBrand(ibrand, &nregistros);
 				Criar_iPrice(iprice, &nregistros);
@@ -402,7 +402,7 @@ void gerarChave(Produto * Novo){
 }
 
 /* (Re)faz o índice respectivo */
-void criar_iprimary(Ip *indice_primario, int * nregistros){
+void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 
 	/*	A chave primária IPRIMARY será criada a partir da junção das duas primeiras letras do NOME DO PRODUTO(MARCA), das duas primeiras letras da MARCA, do dia e do mês da DATA DE REGISTRO e do ANO de LANÇAMENTO.
 	Para que seja possível gerar a chave primária, precisamos demarcar os campos, para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
@@ -544,22 +544,17 @@ void Inserir(Produto * Novo){
 	//Precisamos obter o TAMANHO do REGISTRO AUXILIAR (rAuxiliar) para sabermos quantos "bytes" faltam para preencher totalmento o REGISTRO.
 	int Tamanho = strlen(rAuxiliar);
 
-	// printf("\n Tamanho = %d\n", Tamanho);
-
+	// printf("\nTamanho = %d\n", Tamanho);
 
 	int i;
 	//Preenchendo o REGISTRO por completo (192bytes)
-	for(i = Tamanho; i < 192; i++){
-		// printf("%d ", i);
+	for(i = Tamanho; i < 192; i++)
 		rAuxiliar[i] = '#';
-	}
 
-	// printf("%d", strlen(rAuxiliar));
+	// printf("\nTamanho - Final = %d", strlen(rAuxiliar));
 	// printf("\n Registro: %s \n", rAuxiliar);
 
 	strcat(ARQUIVO, rAuxiliar);
-
-	// printf("\n%s\n", ARQUIVO);
 
 }
 
