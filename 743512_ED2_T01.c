@@ -130,7 +130,7 @@ void Criar_iProduct (Is* iProduct, int * nRegistros);
 
 void Criar_iBrand (Is* iBrand, int * nRegistros);
 
-void Criar_iPrice (Ir* iCategory, int * nRegistros);
+void Criar_iPrice (Isf *iPrice,  int * nRegistros);
 
 /* Lista Invertida */
 // void Criar_iCategory ();
@@ -209,6 +209,7 @@ int main(){
 				criar_iprimary(iprimary, &nregistros);
 				Criar_iProduct(iproduct, &nregistros);
 				Criar_iBrand(ibrand, &nregistros);
+				Criar_iPrice(iprice, &nregistros);
 		
 			break;
 			case 2:
@@ -417,6 +418,8 @@ void criar_iprimary(Ip *indice_primario, int * nregistros){
 
 void Criar_iProduct (Is* iProduct, int * nRegistros ){
 
+	/* O índice secundário IPRODUCT contém a CHAVE PRIMÁRIA (pk) e o NOME do PRODUTO do REGISTRO. Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
+
 	for(int i = 0; i < (*nRegistros); i++){
 		
 		strcpy(iProduct[i].pk, recuperar_registro(i).pk);
@@ -428,7 +431,7 @@ void Criar_iProduct (Is* iProduct, int * nRegistros ){
 
 void Criar_iBrand (Is* iBrand, int * nRegistros){
 
-	/* A chave secundária IBRAND contém a CHAVE PRIMÁRIA (pk) e a MARCA do REGISTRO. Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
+	/* O índice secundário IBRAND contém a CHAVE PRIMÁRIA (pk) e a MARCA do REGISTRO. Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
 
 	for(int i = 0; i < (*nRegistros); i++){
 
@@ -439,7 +442,46 @@ void Criar_iBrand (Is* iBrand, int * nRegistros){
 	}
 }
 
-void Criar_iPrice (Ir* iCategory, int * nRegistros);
+void Criar_iPrice (Isf *iPrice, int * nRegistros){
+
+	/* O índice secundário ICATEGORY contém a CHAVE PRIMÁRIA (pk) e o PREÇO FINAL, ou seja, PREÇO COM DESCONTO.  Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
+
+	for(int i = 0; i < (*nRegistros); i++){
+
+		strcpy(iPrice[i].pk, recuperar_registro(i).pk);
+
+		/*Preço Original do Produto*/
+		float Preco = atof(recuperar_registro(i).preco);
+
+		// printf("Preço Original: %f\n", Preco );
+				
+		/* Desconto em Porcentagem*/
+		float Desconto = atof(recuperar_registro(i).desconto);
+		
+		// printf("Desconto: %f\n", Desconto);
+	
+		Desconto/=100;
+
+		// printf("Desconto: %f\n", Desconto);
+
+		/* Valor do Desconto*/
+		float Valor_Desconto;
+		Valor_Desconto = Preco * Desconto;
+
+		// printf("Valor do Desconto: %f\n", Valor_Desconto);
+
+		/*Aplicando o Valor do Desconto*/
+		Preco-=Valor_Desconto;
+
+		// printf("Preço: %f\n", Preco);
+
+
+		iPrice[i].price = Preco;
+	
+	}
+	 
+
+}
 
 /* Realiza os scanfs na struct Produto */
 void ler_entrada(char * registro, Produto *novo){
@@ -506,9 +548,10 @@ void Inserir(Produto * Novo){
 	// printf("\n Tamanho = %d\n", Tamanho);
 
 	//Preenchendo o REGISTRO por completo (192bytes)
-	for(int i = Tamanho; Tamanho < TAM_REGISTRO; i++)
+	for(int i = Tamanho; Tamanho < TAM_REGISTRO-2; i++)
 		rAuxiliar[i] = '#';
 
+	printf("%d", strlen(rAuxiliar));
 	// printf("\n Registro: %s \n", rAuxiliar);
 
 	strcat(ARQUIVO, rAuxiliar);
