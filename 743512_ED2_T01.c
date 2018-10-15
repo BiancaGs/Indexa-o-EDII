@@ -126,11 +126,11 @@ void imprimirSecundario(Is* iproduct, Is* ibrand, Ir* icategory, Isf *iprice, in
 /*-----------------------*/
 
 /* Índice Simples */
-void Criar_iProduct (Is* iProduct, int * nRegistros );
+void Criar_iProduct (Is* iProduct, int * nRegistros);
 
-// void Criar_iBrand ();
+void Criar_iBrand (Is* iBrand, int * nRegistros);
 
-// void Criar_iPrice ();
+void Criar_iPrice (Ir* iCategory, int * nRegistros);
 
 /* Lista Invertida */
 // void Criar_iCategory ();
@@ -208,6 +208,7 @@ int main(){
 				nregistros++;
 				criar_iprimary(iprimary, &nregistros);
 				Criar_iProduct(iproduct, &nregistros);
+				Criar_iBrand(ibrand, &nregistros);
 		
 			break;
 			case 2:
@@ -424,6 +425,21 @@ void Criar_iProduct (Is* iProduct, int * nRegistros ){
 
 	}
 }
+
+void Criar_iBrand (Is* iBrand, int * nRegistros){
+
+	/* A chave secundária IBRAND contém a CHAVE PRIMÁRIA (pk) e a MARCA do REGISTRO. Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
+
+	for(int i = 0; i < (*nRegistros); i++){
+
+		strcpy(iBrand[i].pk, recuperar_registro(i).pk);
+
+		strcpy(iBrand[i].string, recuperar_registro(i).marca);
+	
+	}
+}
+
+void Criar_iPrice (Ir* iCategory, int * nRegistros);
 
 /* Realiza os scanfs na struct Produto */
 void ler_entrada(char * registro, Produto *novo){
