@@ -135,9 +135,13 @@ void Criar_iPrice (Isf *iPrice,  int * nRegistros);
 /* Lista Invertida */
 // void Criar_iCategory ();
 
-void gerarChave(Produto * Novo);
+void gerarChave(Produto* Novo);
 
-void Inserir(Produto*Novo);
+void Inserir(Produto* Novo);
+
+/* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
+void Busca(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int nRegistros, int nCat);
+
 
 /*-----------------------*/
 
@@ -166,6 +170,8 @@ int main(){
 
 	Criar_iPrimary(iprimary, &nregistros);
 
+	/*-----------------------*/
+
 	/*Alocar e criar índices secundários*/
 
 	/* Alocando VARIÁVEIS que NÃO foram previamente alocadas */
@@ -193,6 +199,8 @@ int main(){
 		perror(MEMORIA_INSUFICIENTE);
 		exit(1);
 	}
+
+	/*-----------------------*/
 
 	Produto Novo;
 
@@ -235,6 +243,8 @@ int main(){
 			case 4:
 				/*busca*/
 				printf(INICIO_BUSCA );
+				Busca(iprimary, iproduct, ibrand, icategory, nregistros,  ncat);
+				
 			break;
 			case 5:
 				/*listagens*/
@@ -537,7 +547,7 @@ void ler_entrada(char * registro, Produto *novo){
 void Inserir(Produto * Novo){
 
 	//Registro Auxiliar
-	char rAuxiliar[193];
+	char rAuxiliar[193]; //TAM_REGISTRO
 
 	sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
 
@@ -555,6 +565,25 @@ void Inserir(Produto * Novo){
 	// printf("\n Registro: %s \n", rAuxiliar);
 
 	strcat(ARQUIVO, rAuxiliar);
+
+}
+
+/* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
+void Busca(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int nRegistros, int nCat){
+
+	int Opcao;
+	scanf("%d", &Opcao);
+
+	char Codigo[TAM_PRIMARY_KEY];
+
+	switch(Opcao){
+		case 1:
+			scanf("[^\n]s", Codigo);
+			getchar();
+
+		break;
+
+	}
 
 }
 
