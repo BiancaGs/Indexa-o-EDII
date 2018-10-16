@@ -505,10 +505,10 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 	int Resultado = strcmp(pN, sN);
 
 	// printf("Resultado (Comparaçao): %d\n");
+
+	/*ORDENAR CASO RESULTADO SEJA ZERO*/
 	
 	return Resultado;
-
-
 
 }
 
@@ -527,6 +527,46 @@ void Criar_iProduct (Is* iProduct, int * nRegistros ){
 	qsort(iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
 }
 
+/*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
+/* A ORDENAÇÃO do iBrand será realizada incialmente pela MARCA e em caso de empate pelo CÓDIGO (ÍNDICE PRIMÁRIO) */
+int Compara_iBrand(const void * pMarca , const void * sMarca){
+
+	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
+		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
+		0  - Indica que os parâmentros são IGUAIS
+		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
+	
+		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
+	*/
+
+	/* Por definição estamos recebendo CONST VOID *, então precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
+
+	// printf("\nCOMPARAÇAO\n");
+
+	/* Primeiro Marca*/
+	char pM[TAM_PRIMARY_KEY];
+	strcpy(pM,(*(Is *)pMarca).string);
+
+	// printf("\nPrimeiro Código: %s\n", pCod);
+	
+	/*Segundo Marca*/
+	char sM[TAM_PRIMARY_KEY];
+	strcpy(sM, (*(Is*)sMarca).string);
+
+	// printf("\nSegundo Código: %s\n", sCod);
+
+	int Resultado = strcmp(pM, sM);
+
+	// printf("Resultado (Comparaçao): %d\n");
+
+	/*ORDENAR CASO RESULTADO SEJA ZERO - IGUAIS*/
+	
+	return Resultado;
+
+}
+
+
+
 void Criar_iBrand (Is* iBrand, int * nRegistros){
 
 	/* O índice secundário IBRAND contém a CHAVE PRIMÁRIA (pk) e a MARCA do REGISTRO. Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
@@ -538,6 +578,12 @@ void Criar_iBrand (Is* iBrand, int * nRegistros){
 		strcpy(iBrand[i].string, recuperar_registro(i).marca);
 	
 	}
+
+	qsort(iBrand, *nRegistros, sizeof(Is), Compara_iBrand);
+
+
+	
+
 }
 
 void Criar_iPrice (Isf *iPrice, int * nRegistros){
