@@ -182,23 +182,31 @@ int main(){
 		exit(1);
 	}
 
+	Criar_iProduct(iproduct, &nregistros);
+
 	Is* ibrand = (Is*) malloc (MAX_REGISTROS * sizeof(Is));
   	if (!ibrand) {
 		perror(MEMORIA_INSUFICIENTE);
 		exit(1);
 	}
 
+	Criar_iBrand(ibrand, &nregistros);
+	
 	Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
 	if (!icategory) {
 		perror(MEMORIA_INSUFICIENTE);
 		exit(1);
 	}
+
+	//Criar_iCategory(icategory, &nregistros);
 	
 	Isf *iprice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
 	if (!iprice) {
 		perror(MEMORIA_INSUFICIENTE);
 		exit(1);
 	}
+
+	Criar_iPrice(iprice, &nregistros);
 
 	/*-----------------------*/
 
@@ -478,16 +486,6 @@ void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 /* A ORDENAÇÃO do iProduct será realizada incialmente pelo NOME DO PRODUTO (MODELO) e em caso de empate pelo CÓDIGO (ÍNDICE PRIMÁRIO) */
 int Compara_iProduct(const void * pNome , const void * sNome){
 
-	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
-		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
-		0  - Indica que os parâmentros são IGUAIS
-		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
-	
-		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
-	*/
-
-	/* Por definição estamos recebendo CONST VOID *, então precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
-
 	// printf("\nCOMPARAÇAO\n");
 
 	/* Primeiro Nome*/
@@ -532,16 +530,6 @@ void Criar_iProduct (Is* iProduct, int * nRegistros ){
 /*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
 /* A ORDENAÇÃO do iBrand será realizada incialmente pela MARCA e em caso de empate pelo CÓDIGO (ÍNDICE PRIMÁRIO) */
 int Compara_iBrand(const void * pMarca , const void * sMarca){
-
-	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
-		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
-		0  - Indica que os parâmentros são IGUAIS
-		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
-	
-		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
-	*/
-
-	/* Por definição estamos recebendo CONST VOID *, então precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
 
 	// printf("\nCOMPARAÇAO\n");
 
@@ -649,7 +637,6 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 		Preco-=Valor_Desconto;
 
 		// printf("Preço: %f\n", Preco);
-
 
 		iPrice[i].price = Preco;
 	
