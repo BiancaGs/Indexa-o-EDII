@@ -411,6 +411,43 @@ void gerarChave(Produto * Novo){
 
 }
 
+/*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
+int Compara (const void * pCodigo, const void * sCodigo){
+
+	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
+		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
+		0  - Indica que os parâmentros são IGUAIS
+		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
+	
+		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
+	*/
+
+	/* Por definição estamos recebendo CONST VOID *, entretanto o PRODUTO é uma STRUCT, logo, precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
+
+	// printf("\nCOMPARAÇAO\n");
+	
+	/* Primeiro Código*/
+	char pCod[TAM_PRIMARY_KEY];
+	strcpy(pCod,(*(Ip *)pCodigo).pk);
+
+	// printf("\nPrimeiro Código: %s\n", pCod);
+	
+	/*Segundo Código*/
+	char sCod[TAM_PRIMARY_KEY];
+	strcpy(sCod, (*(Ip*)sCodigo).pk);
+
+	// printf("\nSegundo Código: %s\n", sCod);
+
+	int Resultado = strcmp(pCod, sCod);
+
+	// printf("Resultado (Comparaçao): %d\n");
+
+	return Resultado;
+	
+}
+
+
+
 /* (Re)faz o índice respectivo */
 void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 
@@ -423,6 +460,17 @@ void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 		
 		strcpy(indice_primario[i].pk, recuperar_registro(i).pk);	
 	}
+
+
+	qsort(indice_primario, *nregistros, sizeof(Ip), Compara);
+
+	/*IMPRESSÃO PARA VERIFICAR RESULTADO DA ORDENAÇÕA*/
+	// for(int i = 0; i< (*nregistros); i++){
+	// 	printf("RRN: %d PK: %s\n", indice_primario[i].rrn, indice_primario[i].pk);
+			
+	// }
+
+
 
 }
 
