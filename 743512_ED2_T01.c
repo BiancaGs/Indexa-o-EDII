@@ -491,16 +491,18 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 	// printf("\nCOMPARAÇAO\n");
 
 	/* Primeiro Nome*/
-	char pN[TAM_PRIMARY_KEY];
+	char pN[TAM_NOME];
 	strcpy(pN,(*(Is *)pNome).string);
 
-	// printf("\nPrimeiro: %s\n", pCod);
+	// printf("\nPrimeiro: %s\n", pN);
 	
 	/*Segundo Código*/
-	char sN[TAM_PRIMARY_KEY];
+	char sN[TAM_NOME];
 	strcpy(sN, (*(Is*)sNome).string);
 
-	// printf("\nSegundo: %s\n", sCod);
+	// printf("\nSegundo: %s\n", sN);
+
+	// int Resultado = strcmp((*(Is *)pNome).string , (*(Is*)sNome).string);
 
 	int Resultado = strcmp(pN, sN);
 
@@ -544,13 +546,13 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 	// printf("\nCOMPARAÇAO\n");
 
 	/* Primeiro Marca*/
-	char pM[TAM_PRIMARY_KEY];
+	char pM[TAM_MARCA];
 	strcpy(pM,(*(Is *)pMarca).string);
 
 	// printf("\nPrimeiro: %s\n", pCod);
 	
 	/*Segundo Marca*/
-	char sM[TAM_PRIMARY_KEY];
+	char sM[TAM_MARCA];
 	strcpy(sM, (*(Is*)sMarca).string);
 
 	// printf("\nSegundo: %s\n", sCod);
