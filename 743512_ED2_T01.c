@@ -494,13 +494,13 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 	char pN[TAM_PRIMARY_KEY];
 	strcpy(pN,(*(Is *)pNome).string);
 
-	// printf("\nPrimeiro Código: %s\n", pCod);
+	// printf("\nPrimeiro: %s\n", pCod);
 	
 	/*Segundo Código*/
 	char sN[TAM_PRIMARY_KEY];
 	strcpy(sN, (*(Is*)sNome).string);
 
-	// printf("\nSegundo Código: %s\n", sCod);
+	// printf("\nSegundo: %s\n", sCod);
 
 	int Resultado = strcmp(pN, sN);
 
@@ -547,13 +547,13 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 	char pM[TAM_PRIMARY_KEY];
 	strcpy(pM,(*(Is *)pMarca).string);
 
-	// printf("\nPrimeiro Código: %s\n", pCod);
+	// printf("\nPrimeiro: %s\n", pCod);
 	
 	/*Segundo Marca*/
 	char sM[TAM_PRIMARY_KEY];
 	strcpy(sM, (*(Is*)sMarca).string);
 
-	// printf("\nSegundo Código: %s\n", sCod);
+	// printf("\nSegundo: %s\n", sCod);
 
 	int Resultado = strcmp(pM, sM);
 
@@ -564,8 +564,6 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 	return Resultado;
 
 }
-
-
 
 void Criar_iBrand (Is* iBrand, int * nRegistros){
 
@@ -581,11 +579,42 @@ void Criar_iBrand (Is* iBrand, int * nRegistros){
 
 	qsort(iBrand, *nRegistros, sizeof(Is), Compara_iBrand);
 
-
-	
-
 }
 
+/*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
+/* A ORDENAÇÃO do iPrice será realizada incialmente pela PREÇO FINAL e pelo CÓDIGO (ÍNDICE PRIMÁRIO) */
+int Compara_iPrice(const void * pPreco , const void * sPreco){
+
+	/* A função STRCMP não pode ser utilizada para FLOAT, apenas para CONST CHAR*, entretanto por convenção vamos aderir as mesmas possibilidades para RESULTADO
+		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
+		0  - Indica que os parâmentros são IGUAIS
+		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
+	*/
+
+	/* Por definição estamos recebendo CONST VOID *, então precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
+
+	/* Primeiro Preco*/
+	float pP;
+	pP = (*(Isf *)pPreco).price;
+	
+	/*Segundo Preco*/
+	float sP;
+	sP = (*(Isf*)sPreco).price;
+
+	// int Resultado = strcmp(pP, sP);
+
+	int Resultado;
+
+	if(pP < sP)
+		Resultado = -1;
+	else if( pP == sP)
+		Resultado = 0;
+	else if (pP > sP)
+		Resultado = 1;
+
+	return Resultado;
+
+}
 void Criar_iPrice (Isf *iPrice, int * nRegistros){
 
 	/* O índice secundário ICATEGORY contém a CHAVE PRIMÁRIA (pk) e o PREÇO FINAL, ou seja, PREÇO COM DESCONTO.  Para isso podemos utilizar a função "recuperar_registro" que retorna um produto com cada campo demarcado, inclusive com um "índice primário" gerado pela função "gerarChave" */
@@ -624,6 +653,7 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 	
 	}
 	 
+	qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
 
 }
 
