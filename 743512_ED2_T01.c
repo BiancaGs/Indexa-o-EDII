@@ -137,7 +137,7 @@ void Criar_iPrice (Isf *iPrice,  int * nRegistros);
 
 void gerarChave(Produto* Novo);
 
-void Inserir(Produto* Novo);
+void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int * nRegistros, int nCat);
 
 /* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
 void Busca(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int nRegistros, int nCat);
@@ -220,12 +220,12 @@ int main(){
 		switch(opcao)
 		{
 			case 1:
-				ler_entrada(0, &Novo);
-				nregistros++;
-				Criar_iPrimary(iprimary, &nregistros);
-				Criar_iProduct(iproduct, &nregistros);
-				Criar_iBrand(ibrand, &nregistros);
-				Criar_iPrice(iprice, &nregistros);
+				//ler_entrada(0, &Novo);
+				Inserir(&Novo, iprimary, iproduct, ibrand, icategory, iprice, &nregistros, ncat );
+				//Criar_iPrimary(iprimary, &nregistros);
+				// Criar_iProduct(iproduct, &nregistros);
+				// Criar_iBrand(ibrand, &nregistros);
+				// Criar_iPrice(iprice, &nregistros);
 		
 			break;
 			case 2:
@@ -416,6 +416,7 @@ void gerarChave(Produto * Novo){
 	Novo->pk[7] = Novo->data[4];
 	Novo->pk[8] = Novo->ano[0];
 	Novo->pk[9] = Novo->ano[1]; 
+	Novo->pk[10] = '\0';
 
 }
 
@@ -437,21 +438,23 @@ int Compara_iPrimary (const void * pCodigo, const void * sCodigo){
 	// printf("\nCOMPARAÇAO\n");
 
 	/* Primeiro Código*/
-	char pCod[TAM_PRIMARY_KEY];
-	strcpy(pCod,(*(Ip *)pCodigo).pk);
+	// char pCod[TAM_PRIMARY_KEY];
+	// strcpy(pCod,(*(Ip *)pCodigo).pk);
 
-	// printf("\nPrimeiro Código: %s\n", pCod);
+	// // printf("\nPrimeiro Código: %s\n", pCod);
 	
-	/*Segundo Código*/
-	char sCod[TAM_PRIMARY_KEY];
-	strcpy(sCod, (*(Ip*)sCodigo).pk);
+	// /*Segundo Código*/
+	// char sCod[TAM_PRIMARY_KEY];
+	// strcpy(sCod, (*(Ip*)sCodigo).pk);
 
 	// printf("\nSegundo Código: %s\n", sCod);
 
-	int Resultado = strcmp(pCod, sCod);
+	// int Resultado = strcmp(pCod, sCod);
+
+	int Resultado = strcmp((*(Ip *)pCodigo).pk,  (*(Ip*)sCodigo).pk);
 
 	// printf("Resultado (Comparaçao): %d\n");
-
+	
 	return Resultado;
 	
 }
@@ -488,22 +491,23 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 
 	// printf("\nCOMPARAÇAO\n");
 
-	/* Primeiro Nome*/
-	char pN[TAM_NOME];
-	strcpy(pN,(*(Is *)pNome).string);
+	// /* Primeiro Nome*/
+	// char pN[TAM_NOME];
+	// strcpy(pN,(*(Is *)pNome).string);
 
-	// printf("\nPrimeiro: %s\n", pN);
+	// // printf("\nPrimeiro: %s\n", pN);
 	
-	/*Segundo Código*/
-	char sN[TAM_NOME];
-	strcpy(sN, (*(Is*)sNome).string);
+	// /*Segundo Código*/
+	// char sN[TAM_NOME];
+	// strcpy(sN, (*(Is*)sNome).string);
 
-	// printf("\nSegundo: %s\n", sN);
+	// // printf("\nSegundo: %s\n", sN);
 
-	// int Resultado = strcmp((*(Is *)pNome).string , (*(Is*)sNome).string);
+	// // int Resultado = strcmp((*(Is *)pNome).string , (*(Is*)sNome).string);
 
-	int Resultado = strcmp(pN, sN);
+	// int Resultado = strcmp(pN, sN);
 
+	int Resultado = strcmp((*(Is *)pNome).string,(*(Is*)sNome).string);
 	// printf("Resultado (Comparaçao): %d\n");
 
 	/*ORDENAR CASO RESULTADO SEJA ZERO*/
@@ -648,6 +652,14 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 
 /* Realiza os scanfs na struct Produto */
 void ler_entrada(char * registro, Produto *novo){
+}
+
+void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int * nRegistros, int nCat){
+
+	int nRegistrosAx = *nRegistros;
+	//printf("%d", nRegistrosAx);
+
+	
 
 	//Código - NÃO é inserido pelo usuário 
 	// char pk[TAM_PRIMARY_KEY];
@@ -662,11 +674,11 @@ void ler_entrada(char * registro, Produto *novo){
 	//Nome do Produto ou Modelo
 	// char Nome[TAM_NOME];
 	
-	scanf("%[^\n]s", novo->nome);
+	scanf("%[^\n]s", Novo->nome);
 	getchar();
 	//Marca
 	// char Marca[TAM_MARCA];
-	scanf("%[^\n]s", novo->marca);
+	scanf("%[^\n]s", Novo->marca);
 	getchar();
 	/*-----------------------*/
 
@@ -674,50 +686,67 @@ void ler_entrada(char * registro, Produto *novo){
 
 	//Data de Registro
 	// char Data[TAM_DATA];	/* DD/MM/AAAA */
-	scanf("%[^\n]s", novo->data);
+	scanf("%[^\n]s", Novo->data);
 	getchar();
 	//Ano de Lançamento
 	// char Ano[TAM_ANO];
-	scanf("%[^\n]s", novo->ano);
+	scanf("%[^\n]s", Novo->ano);
 	getchar();
 	//Preço-Base
 	// char Preço[TAM_PRECO];
-	scanf("%[^\n]s", novo->preco);
+	scanf("%[^\n]s", Novo->preco);
 	getchar();
 	//Desconto
 	// char Desconto[TAM_DESCONTO];
-	scanf("%[^\n]s", novo->desconto);
+	scanf("%[^\n]s", Novo->desconto);
 	getchar();
 	//Categorias
 	// char Categoria[TAM_CATEGORIA];
-	scanf("%[^\n]s", novo->categoria);
+	scanf("%[^\n]s", Novo->categoria);
 	getchar();
 	/*-----------------------*/
 
-	Inserir(novo);
-}
+	gerarChave(Novo);
 
-void Inserir(Produto * Novo){
+	Ip * Busca = (Ip*)bsearch(Novo->pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
 
-	//Registro Auxiliar
-	char rAuxiliar[193]; //TAM_REGISTRO
+	if(Busca != NULL)
+		printf(ERRO_PK_REPETIDA, Novo->pk);
+	
+	else{
+		
+		nRegistrosAx++;
+		
+		//printf("%d", nRegistrosAx);
 
-	sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
+		*nRegistros = nRegistrosAx;
+		
+		//Registro Auxiliar
+		char rAuxiliar[193]; //TAM_REGISTRO
 
-	//Precisamos obter o TAMANHO do REGISTRO AUXILIAR (rAuxiliar) para sabermos quantos "bytes" faltam para preencher totalmento o REGISTRO.
-	int Tamanho = strlen(rAuxiliar);
+		sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
 
-	// printf("\nTamanho = %d\n", Tamanho);
+		//Precisamos obter o TAMANHO do REGISTRO AUXILIAR (rAuxiliar) para sabermos quantos "bytes" faltam para preencher totalmento o REGISTRO.
+		int Tamanho = strlen(rAuxiliar);
 
-	int i;
-	//Preenchendo o REGISTRO por completo (192bytes)
-	for(i = Tamanho; i < 192; i++)
-		rAuxiliar[i] = '#';
+		// printf("\nTamanho = %d\n", Tamanho);
 
-	// printf("\nTamanho - Final = %d", strlen(rAuxiliar));
-	// printf("\n Registro: %s \n", rAuxiliar);
+		int i;
+		//Preenchendo o REGISTRO por completo (192bytes)
+		for(i = Tamanho; i < 192; i++)
+			rAuxiliar[i] = '#';
 
-	strcat(ARQUIVO, rAuxiliar);
+		// printf("\nTamanho - Final = %d", strlen(rAuxiliar));
+		// printf("\n Registro: %s \n", rAuxiliar);
+
+
+			strcat(ARQUIVO, rAuxiliar);
+			Criar_iPrimary(iPrimary, nRegistros);
+			Criar_iProduct(iProduct, nRegistros);
+			Criar_iBrand(iBrand, nRegistros);
+			Criar_iPrice(iPrice, nRegistros);
+		
+		}
 
 }
 
