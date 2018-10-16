@@ -412,7 +412,9 @@ void gerarChave(Produto * Novo){
 }
 
 /*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
-int Compara (const void * pCodigo, const void * sCodigo){
+int Compara_iPrimary (const void * pCodigo, const void * sCodigo){
+
+	/* A ORDENAÇÃO do iPrimary será realizado pelo CÓDIGO (ÍNDICE PRIMÁRIO)*/
 
 	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
 		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
@@ -422,10 +424,10 @@ int Compara (const void * pCodigo, const void * sCodigo){
 		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
 	*/
 
-	/* Por definição estamos recebendo CONST VOID *, entretanto o PRODUTO é uma STRUCT, logo, precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
+	/* Por definição estamos recebendo CONST VOID *, então precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
 
 	// printf("\nCOMPARAÇAO\n");
-	
+
 	/* Primeiro Código*/
 	char pCod[TAM_PRIMARY_KEY];
 	strcpy(pCod,(*(Ip *)pCodigo).pk);
@@ -462,13 +464,49 @@ void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 	}
 
 
-	qsort(indice_primario, *nregistros, sizeof(Ip), Compara);
+	qsort(indice_primario, *nregistros, sizeof(Ip), Compara_iPrimary);
 
-	/*IMPRESSÃO PARA VERIFICAR RESULTADO DA ORDENAÇÕA*/
+	/*VERIFICAR RESULTADO DA ORDENAÇÃO*/
 	// for(int i = 0; i< (*nregistros); i++){
 	// 	printf("RRN: %d PK: %s\n", indice_primario[i].rrn, indice_primario[i].pk);
 			
 	// }
+
+}
+
+/*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
+/* A ORDENAÇÃO do iProduct será realizada incialmente pelo NOME DO PRODUTO (MODELO) e em caso de empate pelo CÓDIGO (ÍNDICE PRIMÁRIO) */
+int Compara_iProduct(const void * pNome , const void * sNome){
+
+	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
+		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
+		0  - Indica que os parâmentros são IGUAIS
+		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
+	
+		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
+	*/
+
+	/* Por definição estamos recebendo CONST VOID *, então precisamos realizar a conversão, para por conseguinte podermos acessar o dados que desejamos*/
+
+	// printf("\nCOMPARAÇAO\n");
+
+	/* Primeiro Nome*/
+	char pN[TAM_PRIMARY_KEY];
+	strcpy(pN,(*(Is *)pNome).string);
+
+	// printf("\nPrimeiro Código: %s\n", pCod);
+	
+	/*Segundo Código*/
+	char sN[TAM_PRIMARY_KEY];
+	strcpy(sN, (*(Is*)sNome).string);
+
+	// printf("\nSegundo Código: %s\n", sCod);
+
+	int Resultado = strcmp(pN, sN);
+
+	// printf("Resultado (Comparaçao): %d\n");
+	
+	return Resultado;
 
 
 
@@ -485,6 +523,8 @@ void Criar_iProduct (Is* iProduct, int * nRegistros ){
 		strcpy(iProduct[i].string, recuperar_registro(i).nome); 
 
 	}
+
+	qsort(iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
 }
 
 void Criar_iBrand (Is* iBrand, int * nRegistros){
