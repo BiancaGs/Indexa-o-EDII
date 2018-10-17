@@ -142,6 +142,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 /* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
 void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat);
 
+/* Realiza três tipos de LISTAGEM, por CÓDIGO, CATEGORIA, MARCA e PREÇO com DESCONTO APLICADO*/
 void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat);
 
 
@@ -650,7 +651,7 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 		// printf("Preço Original: %f\n", Preco );
 				
 		/* Desconto em Porcentagem*/
-		float Desconto = atof(recuperar_registro(i).desconto);
+		int Desconto = (int)(recuperar_registro(i).desconto);
 		
 		// printf("Desconto: %f\n", Desconto);
 	
@@ -677,16 +678,10 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 
 }
 
-/* Realiza os scanfs na struct Produto */
-void ler_entrada(char * registro, Produto *novo){
-}
-
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int * nRegistros, int nCat){
 
 	int nRegistrosAx = *nRegistros;
 	//printf("%d", nRegistrosAx);
-
-	
 
 	//Código - NÃO é inserido pelo usuário 
 	// char pk[TAM_PRIMARY_KEY];
@@ -768,11 +763,55 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		// printf("\n Registro: %s \n", rAuxiliar);
 
 
-			strcat(ARQUIVO, rAuxiliar);
-			Criar_iPrimary(iPrimary, nRegistros);
-			Criar_iProduct(iProduct, nRegistros);
-			Criar_iBrand(iBrand, nRegistros);
-			Criar_iPrice(iPrice, nRegistros);
+		strcat(ARQUIVO, rAuxiliar);
+
+		
+			/* As funções Criar_iPrimary/Criar_iProduct/Criar_iBrand/Criar_iCategory/Criar_iPrice refazem todos os índices por completo, logo, não são viáveis para inserir um unico registro. Estamos inserindo no final do ARQUIVO, logo é mais viável simplesmente criar na última posição dos índices e apenas reordenar*/
+			
+			/*Posição no ARQUIVO - Posição dos Índice*/
+			int RRN = (*nRegistros)-1;
+			
+			/*Índice Primário*/
+			iPrimary[RRN].rrn = RRN; 	
+			strcpy(iPrimary[RRN].pk, recuperar_registro(RRN).pk);	
+			qsort(iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+			
+			/*iProduct*/
+			strcpy(iProduct[RRN].pk, recuperar_registro(RRN).pk);
+			strcpy(iProduct[RRN].string, recuperar_registro(RRN).nome); 
+			qsort(iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
+
+			/*iBrand*/
+			strcpy(iBrand[RRN].pk, recuperar_registro(RRN).pk);
+			strcpy(iBrand[RRN].string, recuperar_registro(RRN).marca);
+			qsort(iBrand, *nRegistros, sizeof(Is), Compara_iBrand);
+
+			/*iPrice*/	
+			strcpy(iPrice[RRN].pk, recuperar_registro(RRN).pk);
+
+			/*Preço Original do Produto*/
+			float Preco = atof(recuperar_registro(RRN).preco);
+
+			/* Desconto em Porcentagem*/
+			int Desconto = (int)(recuperar_registro(RRN).desconto);	
+			
+			Desconto/=100;
+			/* Valor do Desconto*/
+			float Valor_Desconto;
+			
+			Valor_Desconto = Preco * Desconto;
+			
+			/*Aplicando o Valor do Desconto*/
+			Preco-=Valor_Desconto;
+		
+			iPrice[RRN].price = Preco;
+		
+			qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
+
+			// Criar_iPrimary(iPrimary, nRegistros);
+			// Criar_iProduct(iProduct, nRegistros);
+			// Criar_iBrand(iBrand, nRegistros);
+			// Criar_iPrice(iPrice, nRegistros);
 		
 		}
 
@@ -835,6 +874,7 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistr
 
 	if(!(*nRegistros))
 		printf(REGISTRO_N_ENCONTRADO);
+		// printf(ARQUIVO_VAZIO);
 
 	switch(Opcao){
 		case 1:
