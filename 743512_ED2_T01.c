@@ -510,6 +510,8 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 
 	// int Resultado = strcmp(pN, sN);
 
+	/*Monitoria*/
+
 	int Resultado = strcmp((*(Is *)pNome).string,(*(Is*)sNome).string);
 	// printf("Resultado (Comparaçao): %d\n");
 
@@ -564,6 +566,8 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 
 	// int Resultado = strcmp((*(Is *)pMarca).string), (*(Is*)sMarca).string));
 	// printf("Resultado (Comparaçao): %d\n");
+
+	/*Monitoria*/
 
 	if(Resultado == 0){
 		Resultado = strcmp((*(Is *)pMarca).pk,(*(Is*)sMarca).pk);
@@ -622,6 +626,8 @@ int Compara_iPrice(const void * pPreco , const void * sPreco){
 	else if (pP > sP)
 		Resultado = 1;
 
+	/*Monitoria*/
+	
 	if(Resultado == 0){
 		Resultado = strcmp((*(Isf *)pPreco).pk,(*(Isf*)sPreco).pk);
 	}
