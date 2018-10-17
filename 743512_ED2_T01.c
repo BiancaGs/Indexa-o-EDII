@@ -513,6 +513,11 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 	int Resultado = strcmp((*(Is *)pNome).string,(*(Is*)sNome).string);
 	// printf("Resultado (Comparaçao): %d\n");
 
+	if(Resultado == 0){
+		Resultado = strcmp((*(Is *)pNome).pk,(*(Is*)sNome).pk);
+	}
+
+
 	/*ORDENAR CASO RESULTADO SEJA ZERO*/
 	
 	return Resultado;
@@ -559,6 +564,10 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 
 	// int Resultado = strcmp((*(Is *)pMarca).string), (*(Is*)sMarca).string));
 	// printf("Resultado (Comparaçao): %d\n");
+
+	if(Resultado == 0){
+		Resultado = strcmp((*(Is *)pMarca).pk,(*(Is*)sMarca).pk);
+	}
 
 	/*ORDENAR CASO RESULTADO SEJA ZERO - IGUAIS*/
 	
@@ -612,6 +621,11 @@ int Compara_iPrice(const void * pPreco , const void * sPreco){
 		Resultado = 0;
 	else if (pP > sP)
 		Resultado = 1;
+
+	if(Resultado == 0){
+		Resultado = strcmp((*(Isf *)pPreco).pk,(*(Isf*)sPreco).pk);
+	}
+	
 
 	return Resultado;
 
