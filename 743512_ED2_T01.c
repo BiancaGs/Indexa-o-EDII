@@ -140,7 +140,10 @@ void gerarChave(Produto* Novo);
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int * nRegistros, int nCat);
 
 /* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
-void Busca(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int nRegistros, int nCat);
+void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat);
+
+void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat);
+
 
 
 /*-----------------------*/
@@ -223,9 +226,9 @@ int main(){
 				//ler_entrada(0, &Novo);
 				Inserir(&Novo, iprimary, iproduct, ibrand, icategory, iprice, &nregistros, ncat );
 				//Criar_iPrimary(iprimary, &nregistros);
-				// Criar_iProduct(iproduct, &nregistros);
-				// Criar_iBrand(ibrand, &nregistros);
-				// Criar_iPrice(iprice, &nregistros);
+				//Criar_iProduct(iproduct, &nregistros);
+				//Criar_iBrand(ibrand, &nregistros);
+				//Criar_iPrice(iprice, &nregistros);
 		
 			break;
 			case 2:
@@ -251,12 +254,13 @@ int main(){
 			case 4:
 				/*busca*/
 				printf(INICIO_BUSCA );
-				Busca(iprimary, iproduct, ibrand, icategory, nregistros,  ncat);
+				Busca_Produto(iprimary, iproduct, ibrand, icategory, &nregistros,  ncat);
 				
 			break;
 			case 5:
 				/*listagens*/
 				printf(INICIO_LISTAGEM);
+				Listar(iprimary, iproduct, ibrand, icategory, &nregistros,  ncat);
 			break;
 			case 6:
 				/*libera espaço*/
@@ -452,7 +456,6 @@ int Compara_iPrimary (const void * pCodigo, const void * sCodigo){
 	// int Resultado = strcmp(pCod, sCod);
 
 	int Resultado = strcmp((*(Ip *)pCodigo).pk,  (*(Ip*)sCodigo).pk);
-
 	// printf("Resultado (Comparaçao): %d\n");
 	
 	return Resultado;
@@ -479,7 +482,7 @@ void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 
 	/*VERIFICAR RESULTADO DA ORDENAÇÃO*/
 	// for(int i = 0; i< (*nregistros); i++){
-	// 	printf("RRN: %d PK: %s\n", indice_primario[i].rrn, indice_primario[i].pk);
+	// 		printf("RRN: %d PK: %s\n", indice_primario[i].rrn, indice_primario[i].pk);
 			
 	// }
 
@@ -529,6 +532,9 @@ void Criar_iProduct (Is* iProduct, int * nRegistros ){
 	}
 
 	qsort(iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
+
+	//qsort(iProduct, *nRegistros, sizeof(Is), Compara_iPrimary);
+
 }
 
 /*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
@@ -551,6 +557,7 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 
 	int Resultado = strcmp(pM, sM);
 
+	// int Resultado = strcmp((*(Is *)pMarca).string), (*(Is*)sMarca).string));
 	// printf("Resultado (Comparaçao): %d\n");
 
 	/*ORDENAR CASO RESULTADO SEJA ZERO - IGUAIS*/
@@ -723,6 +730,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		
 		//Registro Auxiliar
 		char rAuxiliar[193]; //TAM_REGISTRO
+		rAuxiliar[192] = '\0';
 
 		sprintf(rAuxiliar, "%s@%s@%s@%s@%s@%s@%s@", Novo->nome, Novo->marca,Novo->data, Novo->ano,Novo->preco, Novo->desconto, Novo->categoria);
 
@@ -750,23 +758,74 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 
 }
 
-/* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
-void Busca(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int nRegistros, int nCat){
 
+
+void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros){
+
+	Ip * Busca = (Ip*)bsearch(pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+
+	if(Busca == NULL)
+		printf(REGISTRO_N_ENCONTRADO);
+	
+	else{
+		//Registro do produto procurado
+		int Registro = Busca -> rrn;
+		//Produto Auxiliar = recuperar_registro(Registro);
+		exibir_registro(Registro, 0);
+
+	}	
+		
+}
+
+/* Realiza três tipos de BUSCA, por CÓDIGO, NOME DO PRODUTO ou MODELO e por NOME DA MARCA e CATEGORIA.*/
+void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat){
+
+	//printf(INICIO_BUSCA );
+
+	
 	int Opcao;
 	scanf("%d", &Opcao);
 
-	char Codigo[TAM_PRIMARY_KEY];
+	// if(!*nRegistros){
+	// 	printf(ARQUIVO_VAZIO);
+   	// 	return;
+  	// }
+
+	char pk[TAM_PRIMARY_KEY];
 
 	switch(Opcao){
 		case 1:
-			scanf("[^\n]s", Codigo);
 			getchar();
+			scanf("%[^\n]s", pk);
+			// printf("%s\n", pk);
+			getchar();
+			Busca_iPrimary(pk, iPrimary, nRegistros);
+			
 
 		break;
 
 	}
 
 }
+
+void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat){
+
+	int Opcao;
+	scanf("%d", &Opcao);
+
+	switch(Opcao){
+		case 1:
+			for(int i = 0; i < *nRegistros; i++){
+
+			}
+				
+		break;
+
+	}
+
+
+
+}
+
 
 /* ---------------------------------------------- */
