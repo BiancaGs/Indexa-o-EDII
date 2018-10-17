@@ -800,8 +800,6 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 			// printf("%s\n", pk);
 			getchar();
 			Busca_iPrimary(pk, iPrimary, nRegistros);
-			
-
 		break;
 
 	}
@@ -810,22 +808,39 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 
 void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* nRegistros, int nCat){
 
+	int Registro = -1;
+
 	int Opcao;
 	scanf("%d", &Opcao);
 
+	if(!(*nRegistros))
+		printf(REGISTRO_N_ENCONTRADO);
+
 	switch(Opcao){
 		case 1:
-			for(int i = 0; i < *nRegistros; i++){
-
+			for(int i = 0; i < (*nRegistros)-1; i++){
+				exibir_registro(iPrimary[i].rrn, 0);
+				printf("\n");
 			}
-				
+			exibir_registro(iPrimary[(*nRegistros)-1].rrn, 0);
+
+		break;
+		
+		case 3:
+			for(int i = 0; i < (*nRegistros)-1; i++){
+				Ip * Busca = (Ip*)bsearch(iBrand[i].pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+				if(Busca != NULL)
+					Registro = Busca->rrn;
+				exibir_registro(Registro, 0);
+				printf("\n");
+			}
+			Ip * Busca = (Ip*)bsearch(iBrand[*nRegistros].pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+			if(Busca != NULL)
+					Registro = Busca->rrn;
+			exibir_registro(Registro, 0);
 		break;
 
 	}
-
-
-
 }
-
 
 /* ---------------------------------------------- */
