@@ -682,6 +682,19 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 	qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
 
 }
+int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
+
+	//printf("%d\n", *nCatAx);
+	int Resultado;
+	for(int i = 0; i < *nCatAx; i++){
+		Resultado = strcmp(iCategory[i].cat, Categoria);
+		if(Resultado == 0){
+			return Resultado;
+		}
+	}
+	return 1;
+
+}
 
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
@@ -842,19 +855,44 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		char * Cat;
 		Cat = strtok (Categorias, "|");
 		while(Cat != NULL){
-			strcpy(iCategory[nCatAx].cat, Cat);
+			int Resultado = Verifica_iCategory(Cat, iCategory, &nCatAx);
+			if(Resultado == 1){
+				// NAO Achou categoria
+				strcpy(iCategory[nCatAx].cat, Cat);
+				if(iCategory[nCatAx].lista == NULL){ //! sempre entra
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Novo->pk);
+					iCategory[nCatAx].lista = New;
+					New->prox = NULL;
+					//sprintf("New->pk %s\n", New->pk);
+				}
+				nCatAx++;
+			}
+			else{
+				
+				ll * New = (ll*)malloc(sizeof(ll));
+				strcpy(New->pk,Novo->pk);
+
+				ll * Atual = iCategory[nCatAx].lista; 
+
+				while(Atual->prox != NULL){
+					// if(strcmp(New->pk, Atual->prox->pk) < 0){
+					// 	New->prox = Atual->prox;
+					// 	Atual->prox = New;
+					// }
+					Atual = Atual->prox;
+				}
+
+				Atual->prox = New;
+				New->prox = NULL;
+		
+			}  
 			Cat = strtok (NULL, "|");
-			nCatAx++;
 		}
 
 		/*Substituo o número de Categorias Original*/
 		*nCat = nCatAx;
 		// printf("%d\n", *nCat);
-
-		// for(int i = 0; i < *nCat; i++){
-		// 	strcpy(iCategory[i].lista->pk, iPrimary[RRN].pk);
-		// 	iCategory[i].lista->prox = NULL;
-		// }
 		
 		/* -------------------- */	
 
