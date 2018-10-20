@@ -689,10 +689,10 @@ int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
 	for(int i = 0; i < *nCatAx; i++){
 		Resultado = strcmp(iCategory[i].cat, Categoria);
 		if(Resultado == 0){
-			return Resultado;
+			return i;
 		}
 	}
-	return 1;
+	return -1;
 
 }
 
@@ -853,10 +853,11 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		// printf("%d\n", *nCat);
 
 		char * Cat;
+		int Indice;
 		Cat = strtok (Categorias, "|");
 		while(Cat != NULL){
-			int Resultado = Verifica_iCategory(Cat, iCategory, &nCatAx);
-			if(Resultado == 1){
+			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
+			if(Indice == -1){
 				// NAO Achou categoria
 				strcpy(iCategory[nCatAx].cat, Cat);
 				if(iCategory[nCatAx].lista == NULL){ //! sempre entra
@@ -873,7 +874,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 				ll * New = (ll*)malloc(sizeof(ll));
 				strcpy(New->pk,Novo->pk);
 
-				ll * Atual = iCategory[nCatAx].lista; 
+				ll * Atual = iCategory[Indice].lista; 
 
 				while(Atual->prox != NULL){
 					// if(strcmp(New->pk, Atual->prox->pk) < 0){
