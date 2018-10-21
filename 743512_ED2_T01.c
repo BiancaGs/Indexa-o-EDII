@@ -695,7 +695,6 @@ int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
 	return -1;
 
 }
-
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
 	int nRegistrosAx = *nRegistros;
@@ -853,40 +852,42 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		// printf("%d\n", *nCat);
 
 		char * Cat;
+		
+		//Indice da Categoria
 		int Indice;
 		Cat = strtok (Categorias, "|");
 		while(Cat != NULL){
+			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
 			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
 			if(Indice == -1){
-				// NAO Achou categoria
 				strcpy(iCategory[nCatAx].cat, Cat);
-				if(iCategory[nCatAx].lista == NULL){ //! sempre entra
+				if(iCategory[nCatAx].lista == NULL){
 					ll * New = (ll*)malloc(sizeof(ll));
 					strcpy(New->pk,Novo->pk);
 					iCategory[nCatAx].lista = New;
 					New->prox = NULL;
-					//sprintf("New->pk %s\n", New->pk);
 				}
 				nCatAx++;
 			}
 			else{
-				
-				ll * New = (ll*)malloc(sizeof(ll));
-				strcpy(New->pk,Novo->pk);
+				/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
+					<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
+					0  - Indica que os parâmentros são IGUAIS
+					>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
 
-				ll * Atual = iCategory[Indice].lista; 
+					Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
+				*/
+				ll * Atual = iCategory[Indice].lista;
 
 				while(Atual->prox != NULL){
-					// if(strcmp(New->pk, Atual->prox->pk) < 0){
-					// 	New->prox = Atual->prox;
-					// 	Atual->prox = New;
-					// }
 					Atual = Atual->prox;
 				}
-
+				ll * New = (ll*)malloc(sizeof(ll));
+				strcpy(New->pk,Novo->pk);
 				Atual->prox = New;
 				New->prox = NULL;
-		
+				
+
 			}  
 			Cat = strtok (NULL, "|");
 		}
@@ -896,9 +897,6 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		// printf("%d\n", *nCat);
 		
 		/* -------------------- */	
-
-		
-
 	}
 }
 
