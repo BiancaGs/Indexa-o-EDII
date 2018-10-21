@@ -849,26 +849,35 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		int nCatAx;
 
 		nCatAx = *nCat;
-		// printf("%d\n", *nCat);
 
 		char * Cat;
 		
 		//Indice da Categoria
 		int Indice;
+
 		Cat = strtok (Categorias, "|");
+
 		while(Cat != NULL){
 			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
 			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
+			printf("Índice: %d", Indice);			
+			
 			if(Indice == -1){
+				printf("Inicio (if): %d\n", nCatAx);
+
+				
 				strcpy(iCategory[nCatAx].cat, Cat);
-				if(iCategory[nCatAx].lista == NULL){
-					ll * New = (ll*)malloc(sizeof(ll));
-					strcpy(New->pk,Novo->pk);
-					iCategory[nCatAx].lista = New;
-					New->prox = NULL;
-				}
+				ll * New = (ll*)malloc(sizeof(ll));
+				strcpy(New->pk,Novo->pk);
+				iCategory[nCatAx].lista = New;
+				New->prox = NULL;
+
 				nCatAx++;
+				
+				printf("Fim (if): %d\n", nCatAx);
+			
 			}
+			
 			else{
 				/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
 					<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
@@ -882,11 +891,12 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 				while(Atual->prox != NULL){
 					Atual = Atual->prox;
 				}
+
 				ll * New = (ll*)malloc(sizeof(ll));
 				strcpy(New->pk,Novo->pk);
 				Atual->prox = New;
 				New->prox = NULL;
-				
+	
 
 			}  
 			Cat = strtok (NULL, "|");
@@ -894,8 +904,8 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 
 		/*Substituo o número de Categorias Original*/
 		*nCat = nCatAx;
-		// printf("%d\n", *nCat);
-		
+		printf("%d\n", *nCat);
+
 		/* -------------------- */	
 	}
 }
