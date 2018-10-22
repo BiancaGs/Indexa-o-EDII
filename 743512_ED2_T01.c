@@ -701,13 +701,8 @@ int Compara_iCategory(const void * pCategoria , const void * sCategoria){
 	int Resultado = strcmp((*(Ir *)pCategoria).cat,(*(Ir*)sCategoria).cat);
 	// printf("Resultado (Comparaçao): %d\n");
 
-	/*ORDENAR CASO RESULTADO SEJA ZERO - IGUAIS*/
-
-	//if(Resultado == 0)
-	
 	return Resultado;
 }
-
 
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
