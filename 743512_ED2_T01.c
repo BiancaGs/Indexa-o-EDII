@@ -656,7 +656,7 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 		// printf("Preço Original: %f\n", Preco );
 				
 		/* Desconto em Porcentagem*/
-		int Desconto = (int)(recuperar_registro(i).desconto);
+		float Desconto = (int)(recuperar_registro(i).desconto);
 		
 		// printf("Desconto: %f\n", Desconto);
 	
@@ -695,6 +695,17 @@ int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
 	return -1;
 
 }
+
+void iCategory(ll ** Head, char Pk){
+
+
+
+
+
+
+}
+
+
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
 	int nRegistrosAx = *nRegistros;
@@ -820,7 +831,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		float Preco = atof(recuperar_registro(RRN).preco);
 
 		/* Desconto em Porcentagem*/
-		int Desconto = atof(recuperar_registro(RRN).desconto);	
+		float Desconto = atof(recuperar_registro(RRN).desconto);	
 		
 		Desconto/=100;
 		/* Valor do Desconto*/
@@ -834,7 +845,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		iPrice[RRN].price = Preco;
 	
 		qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
-
+		//Criar_iPrice(iPrice, nRegistros);
 		/* -------------------- */	
 
 		/*---------iCategory-----------*/
@@ -860,12 +871,11 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		while(Cat != NULL){
 			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
 			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
-			printf("Índice: %d", Indice);			
+			//printf("Índice: %d\n", Indice);			
 			
 			if(Indice == -1){
-				printf("Inicio (if): %d\n", nCatAx);
+				//printf("Inicio (if): %d\n", nCatAx);
 
-				
 				strcpy(iCategory[nCatAx].cat, Cat);
 				ll * New = (ll*)malloc(sizeof(ll));
 				strcpy(New->pk,Novo->pk);
@@ -874,7 +884,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 
 				nCatAx++;
 				
-				printf("Fim (if): %d\n", nCatAx);
+				//printf("Fim (if): %d\n", nCatAx);
 			
 			}
 			
@@ -888,23 +898,55 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 				*/
 				ll * Atual = iCategory[Indice].lista;
 
+				int flag = 0;
+
+				//Insere antes da PRIMEIRA CATEGORIA(Casos com apenas uma CHAVE PRIMÁRIA) e ANTES da ÚLTIMA CATEGORIA.
+				if(Atual->prox == NULL){
+					if( strcmp(Novo->pk, Atual->pk) < 0){
+						ll * New = (ll*)malloc(sizeof(ll));
+						strcpy(New->pk,Novo->pk);
+						New->prox = iCategory[Indice].lista;
+						iCategory[Indice].lista = New;
+						flag = 1;
+					}
+				}
+
+
+				//Insere no "anterior" quando encontra um maior
 				while(Atual->prox != NULL){
+					//if(Atual->prox != NULL){
+						if(flag == 0){
+							if( strcmp(Novo->pk, Atual->prox->pk) < 0){
+								//printf("%d\n:", strcmp(Novo->pk, Atual->prox->pk));
+								ll * New = (ll*)malloc(sizeof(ll));
+								strcpy(New->pk,Novo->pk);
+								New->prox = iCategory[Indice].lista->prox;
+								iCategory[Indice].lista->prox = New;
+								flag = 1;
+								//return;
+							}
+						}
+					//}
 					Atual = Atual->prox;
 				}
 
-				ll * New = (ll*)malloc(sizeof(ll));
-				strcpy(New->pk,Novo->pk);
-				Atual->prox = New;
-				New->prox = NULL;
-	
-
+				//Insere na ÚLTIMA POSIÇÃO caso seja maior que todas as CHAVES da lista
+				if(Atual->prox == NULL){
+					if(flag == 0){
+						ll * New = (ll*)malloc(sizeof(ll));
+						strcpy(New->pk,Novo->pk);
+						New->prox = Atual->prox;
+						Atual->prox = New;
+						flag = 1;
+					}
+				}
 			}  
 			Cat = strtok (NULL, "|");
 		}
 
 		/*Substituo o número de Categorias Original*/
 		*nCat = nCatAx;
-		printf("%d\n", *nCat);
+		//printf("%d\n", *nCat);
 
 		/* -------------------- */	
 	}
