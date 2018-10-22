@@ -696,13 +696,16 @@ int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
 
 }
 
-void iCategory(ll ** Head, char Pk){
+int Compara_iCategory(const void * pCategoria , const void * sCategoria){ 
 
+	int Resultado = strcmp((*(Ir *)pCategoria).cat,(*(Ir*)sCategoria).cat);
+	// printf("Resultado (Comparaçao): %d\n");
 
+	/*ORDENAR CASO RESULTADO SEJA ZERO - IGUAIS*/
 
-
-
-
+	//if(Resultado == 0)
+	
+	return Resultado;
 }
 
 
@@ -802,6 +805,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		iPrimary[RRN].rrn = RRN; 	
 		strcpy(iPrimary[RRN].pk, recuperar_registro(RRN).pk);	
 		qsort(iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+		// Criar_iPrimary(iPrimary, nRegistros);
 		/* -------------------- */	
 
 		
@@ -811,6 +815,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		strcpy(iProduct[RRN].string, recuperar_registro(RRN).nome); 
 		qsort(iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
 		// Criar_iProduct(iProduct, nRegistros);
+		
 		/* -------------------- */	
 
 
@@ -881,7 +886,6 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 				strcpy(New->pk,Novo->pk);
 				iCategory[nCatAx].lista = New;
 				New->prox = NULL;
-
 				nCatAx++;
 				
 				//printf("Fim (if): %d\n", nCatAx);
@@ -944,10 +948,12 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 			Cat = strtok (NULL, "|");
 		}
 
+
 		/*Substituo o número de Categorias Original*/
 		*nCat = nCatAx;
 		//printf("%d\n", *nCat);
 
+		qsort(iCategory, *nCat, sizeof(Ir), Compara_iCategory );
 		/* -------------------- */	
 	}
 }
