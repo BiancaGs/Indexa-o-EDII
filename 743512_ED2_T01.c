@@ -133,7 +133,7 @@ void Criar_iBrand (Is* iBrand, int * nRegistros);
 void Criar_iPrice (Isf *iPrice,  int * nRegistros);
 
 /* Lista Invertida */
-// void Criar_iCategory ();
+void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat);
 
 void gerarChave(Produto* Novo);
 
@@ -159,6 +159,16 @@ int Compara_iProduct(const void * pNome , const void * sNome);
 int Compara_iBrand(const void * pMarca , const void * sMarca);
 
 int Compara_iPrice(const void * pPreco , const void * sPreco);
+
+// void Gera_iPrimary(Ip *iPrimary, int * nregistros);
+
+// void Gera_iProduct(Is* iProduct, int * nRegistros);
+
+// void Gera_iBrand(Is* iBrand, int * nRegistros);
+
+// void Gera_iPrice(Isf *iPrice, int * nRegistros);
+
+// void Gera_iCategory(Ir *iCategory, int *nRegistros, int *nCat);
 
 /*-----------------------*/
 
@@ -209,13 +219,14 @@ int main(){
 
 	Criar_iBrand(ibrand, &nregistros);
 	
-	Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
+	// Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
+	Ir* icategory = (Ir*) malloc (MAX_CATEGORIAS * sizeof(Ir));
 	if (!icategory) {
 		perror(MEMORIA_INSUFICIENTE);
 		exit(1);
 	}
 
-	//Criar_iCategory(icategory, &nregistros);
+	//Criar_iCategory(icategory, &nregistros, &ncat);
 	
 	Isf *iprice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
 	if (!iprice) {
@@ -238,12 +249,7 @@ int main(){
 		{
 			case 1:
 				Inserir(&Novo, iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat );
-					
-				//Criar_iPrimary(iprimary, &nregistros);
-				//Criar_iProduct(iproduct, &nregistros);
-				//Criar_iBrand(ibrand, &nregistros);
-				//Criar_iPrice(iprice, &nregistros);
-		
+	
 			break;
 			case 2:
 				/*alterar desconto*/
@@ -355,7 +361,6 @@ int carregar_arquivo()
     return strlen(ARQUIVO) / TAM_REGISTRO;
 }
 
-
 /* Recupera do arquivo o registro com o rrn
  * informado e retorna os dados na struct Produto */
 Produto recuperar_registro(int rrn)
@@ -459,7 +464,7 @@ int Compara_iPrimary (const void * pCodigo, const void * sCodigo){
 	// char pCod[TAM_PRIMARY_KEY];
 	// strcpy(pCod,(*(Ip *)pCodigo).pk);
 
-	// // printf("\nPrimeiro Código: %s\n", pCod);
+	// printf("\nPrimeiro Código: %s\n", pCod);
 	
 	// /*Segundo Código*/
 	// char sCod[TAM_PRIMARY_KEY];
@@ -509,24 +514,22 @@ int Compara_iProduct(const void * pNome , const void * sNome){
 	// char pN[TAM_NOME];
 	// strcpy(pN,(*(Is *)pNome).string);
 
-	// // printf("\nPrimeiro: %s\n", pN);
+	// printf("\nPrimeiro: %s\n", pN);
 	
 	// /*Segundo Código*/
 	// char sN[TAM_NOME];
 	// strcpy(sN, (*(Is*)sNome).string);
 
-	// // printf("\nSegundo: %s\n", sN);
-
-	// // int Resultado = strcmp((*(Is *)pNome).string , (*(Is*)sNome).string);
+	// printf("\nSegundo: %s\n", sN);
 
 	// int Resultado = strcmp(pN, sN);
 
-	/*Monitoria*/
 	int Resultado = strcmp((*(Is *)pNome).string,(*(Is*)sNome).string);
 	// printf("Resultado (Comparaçao): %d\n");
 
 	/*ORDENAR CASO RESULTADO SEJA ZERO - IGUAIS*/
 
+	/*Monitoria*/
 	if(Resultado == 0){
 		Resultado = strcmp((*(Is *)pNome).pk,(*(Is*)sNome).pk);
 	}
@@ -581,9 +584,7 @@ int Compara_iBrand(const void * pMarca , const void * sMarca){
 		Resultado = strcmp((*(Is *)pMarca).pk,(*(Is*)sMarca).pk);
 	}
 
-	
 	return Resultado;
-
 }
 
 void Criar_iBrand (Is* iBrand, int * nRegistros){
@@ -634,7 +635,6 @@ int Compara_iPrice(const void * pPreco , const void * sPreco){
 		Resultado = 1;
 
 	/*Monitoria*/
-	
 	if(Resultado == 0){
 		Resultado = strcmp((*(Isf *)pPreco).pk,(*(Isf*)sPreco).pk);
 	}
@@ -659,9 +659,7 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 		float Desconto = (int)(recuperar_registro(i).desconto);
 		
 		// printf("Desconto: %f\n", Desconto);
-	
 		Desconto/=100;
-
 		// printf("Desconto: %f\n", Desconto);
 
 		/* Valor do Desconto*/
@@ -682,6 +680,8 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 	qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
 
 }
+
+//Verifica se uma determinada CATEGORIA já existe
 int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
 
 	//printf("%d\n", *nCatAx);
@@ -693,8 +693,41 @@ int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx){
 		}
 	}
 	return -1;
-
 }
+
+//A função é responsável por adicionar o CÓDIGO do PRODUTO de modo ORDENADO na LISTA da CATEGORIA corresponde.
+//Anteriormente todas as inserções de CÓDIGO do PRODUTO na LISTA da CATEGORIA estavam sendo realizados dentro da função INSERIR, entretanto o tratamento de casos não estava abrangendos todas as situações.
+// void Adiciona_iCategory(ll ** Lista, char * PK){
+
+	//Lista Vazia
+	// if( (*Lista) == NULL || strcmp((*Lista)->pk, PK) > 0){
+	// 	ll * New = (ll*)malloc(sizeof(ll));
+	// 	strcpy(New->pk,PK);
+	// 	New->prox = (*Lista);
+	// 	(*Lista) = New;
+	// 	return;
+	// }
+
+	//else - Não funcionava sempre com o else
+	// 	ll * Atual = *Lista;
+	// 	while (Atual->prox != NULL){
+	// 		if(strcmp(PK, Atual->prox->pk) < 0){
+	// 			ll * New = (ll*)malloc(sizeof(ll));
+	// 			strcpy(New->pk,PK);
+	// 			New->prox = Atual->prox;
+	// 			Atual->prox = New;
+	// 			return;
+	// 		}
+	// 		Atual = Atual->prox;
+	// 	}
+	//}
+
+// 	ll * New = (ll*)malloc(sizeof(ll));
+// 	strcpy(New->pk,PK);
+// 	Atual->prox = New;
+// 	New->prox = NULL;
+
+// }
 
 int Compara_iCategory(const void * pCategoria , const void * sCategoria){ 
 
@@ -703,6 +736,47 @@ int Compara_iCategory(const void * pCategoria , const void * sCategoria){
 
 	return Resultado;
 }
+
+// void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
+
+// 	for(int i = 0; i < (*nRegistros); i++){
+// 		char Categorias[TAM_CATEGORIA];
+		
+// 		strcpy(Categorias, recuperar_registro(i).categoria);
+
+// 		/*Número de Categoria Auxiliar para poder incrementar*/
+// 		int nCatAx;
+
+// 		nCatAx = *nCat;
+
+// 		char * Cat;
+		
+		//Indice da Categoria
+// 		int Indice;
+
+// 		Cat = strtok (Categorias, "|");
+// 		while(Cat != NULL){
+			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
+// 			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
+			
+// 			if(Indice == -1){
+// 				strcpy(iCategory[nCatAx].cat, Cat);
+// 				Adiciona_iCategory(&(iCategory[nCatAx].lista), recuperar_registro(i).pk);
+// 				nCatAx++;
+// 			}
+// 			else
+// 				Adiciona_iCategory(&(iCategory[Indice].lista), recuperar_registro(i).pk);
+
+// 			Cat = strtok (NULL, "|");
+// 		}
+
+// 		/*Substituo o número de Categorias Original*/
+// 		*nCat = nCatAx;
+// 	}
+
+// 	qsort(iCategory, *nCat, sizeof(Ir), Compara_iCategory );
+
+// }
 
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
@@ -788,28 +862,28 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 
 		strcat(ARQUIVO, rAuxiliar);
 	
-		/* As funções Criar_iPrimary/Criar_iProduct/Criar_iBrand/Criar_iCategory/Criar_iPrice refazem todos os índices por completo, logo, não são viáveis para inserir um unico registro. Estamos inserindo no final do ARQUIVO, logo é mais viável simplesmente criar na última posição dos índices e apenas reordenar*/
-		
+		/* As funções Criar_iPrimary/Criar_iProduct/Criar_iBrand/Criar_iCategory/Criar_iPrice refazem todos os índices por completo, logo, não são viáveis para inserir um unico registro. Estamos inserindo no final do ARQUIVO, logo é mais viável simplesmente criar na última posição dos índices e apenas reordenar*/		
 		/*Posição no ARQUIVO - Posição dos Índice*/
-
 		int RRN = (*nRegistros)-1;
-
 
 		/*---------iPrimary-----------*/
 		
 		iPrimary[RRN].rrn = RRN; 	
 		strcpy(iPrimary[RRN].pk, recuperar_registro(RRN).pk);	
 		qsort(iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
-		// Criar_iPrimary(iPrimary, nRegistros);
+		
+		//Gera_iPrimary(iPrimary, nRegistros);
+		
 		/* -------------------- */	
-
 		
 		/*---------iProduct-----------*/
 
 		strcpy(iProduct[RRN].pk, recuperar_registro(RRN).pk);
 		strcpy(iProduct[RRN].string, recuperar_registro(RRN).nome); 
+
 		qsort(iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
-		// Criar_iProduct(iProduct, nRegistros);
+		
+		//Gera_iProduct(iProduct, nRegistros);
 		
 		/* -------------------- */	
 
@@ -819,8 +893,13 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		/*			?				*/
 		strcpy(iBrand[RRN].pk, recuperar_registro(RRN).pk);
 		strcpy(iBrand[RRN].string, recuperar_registro(RRN).marca);
+
 		qsort(iBrand, *nRegistros, sizeof(Is), Compara_iBrand);
+
+		//Gera__iBrand(iBrand, nRegistros);
+
 		// Criar_iBrand(iBrand, nRegistros);
+
 		/* -------------------- */	
 			
 		/*---------iPrice-----------*/
@@ -845,6 +924,9 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		iPrice[RRN].price = Preco;
 	
 		qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
+
+		//Gera_iPrice(iPrice, nRegistros);
+
 		//Criar_iPrice(iPrice, nRegistros);
 		/* -------------------- */	
 
@@ -854,7 +936,7 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 		
 		strcpy(Categorias, recuperar_registro(RRN).categoria);
 
-		// strcpy(iCategory[RRN].cat, recuperar_registro(RRN).categoria);
+		// // strcpy(iCategory[RRN].cat, recuperar_registro(RRN).categoria);
 
 		/*Número de Categoria Auxiliar para poder incrementar*/
 		int nCatAx;
@@ -863,92 +945,104 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 
 		char * Cat;
 		
-		//Indice da Categoria
+		// //Indice da Categoria
 		int Indice;
 
 		Cat = strtok (Categorias, "|");
-
 		while(Cat != NULL){
+
 			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
 			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
+			
 			//printf("Índice: %d\n", Indice);			
 			
 			if(Indice == -1){
 				//printf("Inicio (if): %d\n", nCatAx);
-
-				strcpy(iCategory[nCatAx].cat, Cat);
-				ll * New = (ll*)malloc(sizeof(ll));
-				strcpy(New->pk,Novo->pk);
-				iCategory[nCatAx].lista = New;
-				New->prox = NULL;
-				nCatAx++;
 				
-				//printf("Fim (if): %d\n", nCatAx);
-			
-			}
-			
-			else{
-				/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
-					<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
-					0  - Indica que os parâmentros são IGUAIS
-					>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
+				// printf("Entrou no if\n");
 
-					Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
-				*/
-				ll * Atual = iCategory[Indice].lista;
+				//A CATEGORIA ainda não existe, então ADICIONAMOS.
+				strcpy(iCategory[nCatAx].cat, Cat);
+				
+				//Por conseguinte precisamos adicionar o PRODUTO na lista da CATEGORIA.
+
+				//A função é responsável por adicionar o CÓDIGO do PRODUTO de modo ORDENADO na LISTA da CATEGORIA corresponde.
+				//Anteriormente todas as inserções de CÓDIGO do PRODUTO na LISTA da CATEGORIA estavam sendo realizados dentro da função INSERIR, entretanto o tratamento de casos não estava abrangendos todas as situações.
+				// Adiciona_iCategory(&(iCategory[nCatAx].lista), Novo->pk);
+
+				//Lista Vazia
+				//if( iCategory[nCatAx].lista == NULL){
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Novo->pk);
+					New->prox = iCategory[nCatAx].lista;
+					iCategory[nCatAx].lista = New;
+					// return;
+				//}
+				
+				nCatAx++;
+				//printf("Fim (if): %d\n", nCatAx);
+			}
+			else{
+
+				// printf("Entrou no else\n");
 
 				int flag = 0;
 
-				//Insere antes da PRIMEIRA CATEGORIA(Casos com apenas uma CHAVE PRIMÁRIA) e ANTES da ÚLTIMA CATEGORIA.
-				if(Atual->prox == NULL){
-					if( strcmp(Novo->pk, Atual->pk) < 0){
+				if(flag == 0 && strcmp(iCategory[Indice].lista->pk, Novo->pk) > 0){
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Novo->pk);
+					New->prox = iCategory[Indice].lista;
+					iCategory[Indice].lista = New;
+					flag = 1;
+				}
+				
+				// //else - Não funcionava sempre com o else
+				ll * Anterior = NULL; 
+				ll * Atual = iCategory[Indice].lista;
+				while (Atual!= NULL){
+					//printf("Atual->prox->pk %s\n", Atual->prox->pk);
+					if(flag == 0 && strcmp(Novo->pk, Atual->pk) < 0){
 						ll * New = (ll*)malloc(sizeof(ll));
 						strcpy(New->pk,Novo->pk);
-						New->prox = iCategory[Indice].lista;
-						iCategory[Indice].lista = New;
-						flag = 1;
-					}
-				}
-
-
-				//Insere no "anterior" quando encontra um maior
-				while(Atual->prox != NULL){
-					//if(Atual->prox != NULL){
-						if(flag == 0){
-							if( strcmp(Novo->pk, Atual->prox->pk) < 0){
-								//printf("%d\n:", strcmp(Novo->pk, Atual->prox->pk));
-								ll * New = (ll*)malloc(sizeof(ll));
-								strcpy(New->pk,Novo->pk);
-								New->prox = iCategory[Indice].lista->prox;
-								iCategory[Indice].lista->prox = New;
-								flag = 1;
-								//return;
-							}
+						
+						if(Anterior != NULL){
+							New->prox = Atual;
+							Anterior->prox = New;
+							flag = 1;
 						}
-					//}
-					Atual = Atual->prox;
-				}
-
-				//Insere na ÚLTIMA POSIÇÃO caso seja maior que todas as CHAVES da lista
-				if(Atual->prox == NULL){
-					if(flag == 0){
-						ll * New = (ll*)malloc(sizeof(ll));
-						strcpy(New->pk,Novo->pk);
-						New->prox = Atual->prox;
-						Atual->prox = New;
-						flag = 1;
+						else
+							New->prox = Atual;
+						
+						
 					}
+					Anterior = Atual;
+					if(Atual->prox != NULL)
+						Atual = Atual->prox;
+
 				}
+				
+				if(flag == 0 && strcmp(Atual->pk, Novo->pk) < 0){
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Novo->pk);
+					Atual->prox = New;
+					New->prox = NULL;
+					flag = 1;
+				}		
+				// // ll * Atual = iCategory[Indice].lista;
+				// Adiciona_iCategory(&(iCategory[Indice].lista), Novo->pk);
 			}  
+
 			Cat = strtok (NULL, "|");
 		}
 
-
 		/*Substituo o número de Categorias Original*/
 		*nCat = nCatAx;
-		//printf("%d\n", *nCat);
+		// //printf("%d\n", *nCat);
 
 		qsort(iCategory, *nCat, sizeof(Ir), Compara_iCategory );
+
+		//Gera_iCategory();
+
 		/* -------------------- */	
 	}
 }
@@ -997,13 +1091,15 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 
 	char Nome[TAM_NOME];
 
+	char Categoria[TAM_CATEGORIA];
+
 	switch(Opcao){
 		/*Busca por Código*/
 		case 1:
 			getchar();
 			scanf("%[^\n]s", pk);
-			// printf("%s\n", pk);
 			getchar();
+			// printf("%s\n", pk);
 			Busca_iPrimary(pk, iPrimary, nRegistros);
 		break;
 		
@@ -1012,15 +1108,21 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 		case 2:
 			getchar();
 			scanf("%[^\n]s", Nome);
-			// printf("%s\n", Nome);
 			getchar();
+			// printf("%s\n", Nome);
 			Buscar_iProduct(Nome, iProduct, nRegistros, iPrimary);			
 			//int Tamanho = strlen(Nome);
 			//printf("%d", Tamanho);
-
 		break;
 
 		/*Busca por Nome da Marca e Categoria*/
+		case 3:
+			getchar();
+			scanf("%[^\n]s", Nome);
+			getchar();
+			scanf("%[^\n]s", Categoria);
+			getchar();
+		break;
 
 	}
 }
@@ -1030,6 +1132,8 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 
 	int Registro = -1;
 	int i;
+
+	char Categoria[TAM_CATEGORIA];
 
 	int Opcao;
 	scanf("%d", &Opcao);
@@ -1050,7 +1154,11 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 		break;
 
 		/*Lista por Categoria*/
-		
+		case 2:
+			getchar();
+			scanf("%[^\n]s", Categoria);
+			getchar();
+		break;		
 		/*Lista por Marca*/
 		case 3:
 			for( i = 0; i < (*nRegistros)-1; i++){
@@ -1074,13 +1182,13 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 				Ip * Busca = (Ip*)bsearch(iPrice[i].pk, iPrimary, *nRegistros, sizeof(Isf), Compara_iPrimary);
 					if(Busca != NULL)
 						Registro = Busca->rrn;
-				exibir_registro(Registro, 0);
+				exibir_registro(Registro, 1);
 				printf("\n");		
 			}
 			Busca = (Ip*)bsearch(iPrice[(*nRegistros)-1].pk, iPrimary, (*nRegistros), sizeof(Isf), Compara_iPrimary);
 			if(Busca != NULL)
 				Registro = Busca->rrn;
-			exibir_registro(Registro, 0);
+			exibir_registro(Registro, 1);
 		break;
 
 	}
