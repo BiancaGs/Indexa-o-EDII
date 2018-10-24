@@ -226,7 +226,7 @@ int main(){
 		exit(1);
 	}
 
-	//Criar_iCategory(icategory, &nregistros, &ncat);
+	Criar_iCategory(icategory, &nregistros, &ncat);
 	
 	Isf *iprice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
 	if (!iprice) {
@@ -719,11 +719,96 @@ int Compara_iCategory(const void * pCategoria , const void * sCategoria){
 	return Resultado;
 }
 
-// void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
+void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
 
-// 	qsort(iCategory, *nCat, sizeof(Ir), Compara_iCategory );
+	char Categorias[TAM_CATEGORIA];
 
-// }
+	/*Número de Categoria Auxiliar para poder incrementar*/
+	int nCatAx;
+
+	nCatAx = *nCat;
+
+	char * Cat;
+
+	//Indice da Categoria
+	int Indice;
+
+	for(int i = 0; i < (*nRegistros); i++){
+
+		Produto Auxiliar = recuperar_registro(i);
+				
+		strcpy(Categorias, Auxiliar.categoria);
+
+		Cat = strtok (Categorias, "|");
+		while(Cat != NULL){
+
+			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
+			Indice = Verifica_iCategory(Cat, iCategory, &nCatAx);
+
+			if(Indice == -1){
+				//A CATEGORIA ainda não existe, então ADICIONAMOS.
+				strcpy(iCategory[nCatAx].cat, Cat);
+				
+				//Por conseguinte precisamos adicionar o PRODUTO na lista da CATEGORIA.
+
+				//Lista Vazia
+				ll * New = (ll*)malloc(sizeof(ll));
+				strcpy(New->pk,Auxiliar.pk);
+				New->prox = NULL;
+				iCategory[nCatAx].lista = New;
+							
+				nCatAx++;
+			}
+			else{
+				int flag = 0;
+
+				if(flag == 0 && strcmp(iCategory[Indice].lista->pk, Auxiliar.pk) > 0){
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Auxiliar.pk);
+					New->prox = iCategory[Indice].lista;
+					iCategory[Indice].lista = New;
+					flag = 1;
+				}
+
+				//else - Não funcionava sempre com o else				
+				/*Monitoria*/
+				ll * Anterior = NULL; 
+				ll * Atual = iCategory[Indice].lista;
+
+				while (Atual->prox!= NULL && strcmp(Auxiliar.pk, Atual->pk) > 0){
+					Anterior = Atual;
+					Atual = Atual->prox;
+				}
+
+				ll * New = (ll*)malloc(sizeof(ll));
+				strcpy(New->pk,Auxiliar.pk);
+						
+				if(flag == 0 && Anterior != NULL && strcmp(Atual->pk, New->pk) > 0){
+					New->prox = Atual;
+					Anterior->prox = New;
+					flag = 1;
+				}
+				
+				if(flag == 0 && strcmp(Atual->pk, Auxiliar.pk) < 0){
+					ll * New = (ll*)malloc(sizeof(ll));
+					//printf("%s\n", Atual->pk);
+					strcpy(New->pk,Auxiliar.pk);
+					Atual->prox = New;
+					New->prox = NULL;
+					flag = 1;
+				}		
+			}  
+			Cat = strtok (NULL, "|");
+		}
+
+		/*Substituo o número de Categorias Original*/
+		*nCat = nCatAx;
+		//printf("%d\n", *nCat);
+	}
+	qsort(iCategory, *nCat, sizeof(Ir), Compara_iCategory );
+
+}
+
 
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
