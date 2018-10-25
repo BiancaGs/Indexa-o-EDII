@@ -145,20 +145,34 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 /* Realiza três tipos de LISTAGEM, por CÓDIGO, CATEGORIA, MARCA e PREÇO com DESCONTO APLICADO*/
 void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int nCat);
 
+void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros);
 
-/*Funções Auxiliares*/
+void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
+
+/*-----------------------Funções Auxiliares-----------------------*/
+
 
 void Busca_iProduct(char * Nome, Is* iProduct, int* nRegistros, Ip* iPrimary);
 
 void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros);
 
+void Busca_iBrand(char * Marca, char * Categoria, Is* iBrand,  Ir* iCategory, int* nRegistros, Ip* iPrimary);
+
+/*-----------------------*/
+
 int Compara_iPrimary (const void * pCodigo, const void * sCodigo);
+
+int Compara_iCategory(const void * pCategoria , const void * sCategoria);
 
 int Compara_iProduct(const void * pNome , const void * sNome);
 
 int Compara_iBrand(const void * pMarca , const void * sMarca);
 
 int Compara_iPrice(const void * pPreco , const void * sPreco);
+
+/*-----------------------*/
+
+int Verifica_iCategory(char *Categoria, Ir* iCategory, int*nCatAx);
 
 // void Gera_iPrimary(Ip *iPrimary, int * nregistros);
 
@@ -170,7 +184,7 @@ int Compara_iPrice(const void * pPreco , const void * sPreco);
 
 // void Gera_iCategory(Ir *iCategory, int *nRegistros, int *nCat);
 
-/*-----------------------*/
+/*----------------------------------------------*/
 
 
 /* ==========================================================================
@@ -254,6 +268,7 @@ int main(){
 			case 2:
 				/*alterar desconto*/
 				printf(INICIO_ALTERACAO);
+				Alterar(iprimary, iprice, &nregistros);
 				/*
 				if(alterar([args]))
 					printf(SUCESSO);
@@ -264,6 +279,7 @@ int main(){
 			case 3:
 				/*excluir produto*/
 				printf(INICIO_EXCLUSAO);
+				Excluir(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
 				/*
 				if(remover([args]))
 					printf(SUCESSO);
@@ -806,9 +822,7 @@ void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
 		//printf("%d\n", *nCat);
 	}
 	qsort(iCategory, *nCat, sizeof(Ir), Compara_iCategory );
-
 }
-
 
 void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf* iPrice, int* nRegistros, int *nCat){
 
@@ -1084,9 +1098,12 @@ void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros){
 	
 	else{
 		//printf("Busca iPrimary %s\n", Busca->pk);
+		
 		//Registro do Produto Procurado
 		int Registro = Busca -> rrn;
+		
 		//Produto Auxiliar = recuperar_registro(Registro);
+		
 		exibir_registro(Registro, 0);
 	}	
 }
@@ -1094,6 +1111,7 @@ void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros){
 
 void Buscar_iProduct(char * Nome, Is* iProduct, int* nRegistros, Ip* iPrimary){
 	
+	/* Não funciona*/
 	// Is * Busca = (Is*)bsearch(Nome, iProduct, *nRegistros, sizeof(Is), Compara_iProduct);
 
 	// if(Busca == NULL)
@@ -1123,8 +1141,8 @@ void Busca_iBrand(char * Marca, char * Categoria, Is* iBrand,  Ir* iCategory, in
 	// 	printf(REGISTRO_N_ENCONTRADO);
 
 	// else{		
-		// printf("Busca iBrand - Busca %s\n", Busca->pk);
-		// printf("Busca iBrand - iBrand PK %s\n", iBrand->pk);
+	//	// printf("Busca iBrand - Busca %s\n", Busca->pk);
+	//	// printf("Busca iBrand - iBrand PK %s\n", iBrand->pk);
 		//Busca_iPrimary(iBrand, iPrimary, nRegistros);	
 	// }
 
@@ -1321,6 +1339,96 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 		break;
 
 	}
+}
+
+void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
+
+	int PK[TAM_PRIMARY_KEY];
+
+	scanf("%[^\n]s", PK);
+	getchar();
+
+	Ip * Busca = (Ip*)bsearch(PK, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+
+	if(Busca == NULL){
+		printf(REGISTRO_N_ENCONTRADO);
+		printf(FALHA);
+		return;
+	}
+
+	int RRN = Busca -> rrn;
+
+	//printf("%d\n", Registro);
+	//printf("%s\n", Busca->pk);
+	
+	//O desconto inserido precisa ser de 3 bytes com valor entre 000 e 100.
+	char Desconto[3];
+	
+	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
+		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
+		0  - Indica que os parâmentros são IGUAIS
+		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
+	
+		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
+	*/
+
+	int flag = 0;
+	
+	getchar();
+	scanf("%[^\n]s", &Desconto);
+	getchar();
+
+	if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
+		flag = 1;
+
+	while(flag = 0){	
+		printf(FALHA);
+		
+		getchar();	
+		scanf("%[^\n]s", &Desconto);
+		getchar();
+		
+		if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
+			flag = 1;
+	}
+
+	char *Arquivo = ARQUIVO + RRN * 192;
+
+	int Tamanho = strlen(Arquivo);
+
+	//int Auxiliar = 0;
+
+	int Contador = 0;
+	while(Contador < 5){
+		if(*Arquivo == '@')
+			Contador++;
+			
+		//Auxiliar++;
+		Arquivo++;
+	}
+
+	printf("Contador %d\n", Contador);
+
+	printf("%s\n", Arquivo);
+
+	for(int i = 0; i < 3; i++){
+		Arquivo++;
+		*Arquivo = Desconto[i];
+	}
+
+	// float Preco;
+	// int DescontoAx;
+
+	//printf("%d\n", recuperar_registro(RRN).desconto);
+	// sscanf(recuperar_registro(RRN).desconto, "%d", &DescontoAux);
+	// sscanf(recuperar_registro(RRN).preco, "%f", &Preco);
+
+	//Preco = (Preco * (100-DescontoAx))/100.0;
+	// Preco = Preco * 100;
+	// Preco = (int)Preco/(float)100;
+
+	// iPrice[RRN].price = Preco;
+
 }
 
 /* ---------------------------------------------- */
