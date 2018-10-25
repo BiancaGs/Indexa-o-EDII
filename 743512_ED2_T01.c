@@ -1103,8 +1103,8 @@ void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros){
 		int Registro = Busca -> rrn;
 		
 		//Produto Auxiliar = recuperar_registro(Registro);
-		
-		exibir_registro(Registro, 0);
+		if(Registro != -1)
+			exibir_registro(Registro, 0);
 	}	
 }
 
@@ -1269,10 +1269,16 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 		/*Lista pelo Código*/
 		case 1:
 			for(int i = 0; i < (*nRegistros)-1; i++){
-				exibir_registro(iPrimary[i].rrn, 0);
-				printf("\n");
+				if(iPrimary[i].rrn != -1){
+					//printf("%d\n", iPrimary[i].rrn);
+					exibir_registro(iPrimary[i].rrn, 0);
+					printf("\n");
+				}
 			}
-			exibir_registro(iPrimary[(*nRegistros)-1].rrn, 0);
+			if(iPrimary[(*nRegistros)-1].rrn != -1){
+				//printf("%d\n", iPrimary[i].rrn);
+				exibir_registro(iPrimary[(*nRegistros)-1].rrn, 0);
+			}
 		break;
 
 		/*Lista por Categoria*/
@@ -1311,31 +1317,51 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 			for( i = 0; i < (*nRegistros)-1; i++){
 				// printf("nRegistros %d\n", i);
 				Ip * Busca = (Ip*)bsearch(iBrand[i].pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
-				if(Busca != NULL)
+				if(Busca != NULL){
 					Registro = Busca->rrn;
-				exibir_registro(Registro, 0);
-				printf("\n");				
+					//printf("Registro %d\n", Registro);
+					if(Registro != -1){
+						exibir_registro(Registro, 0);
+						printf("\n");				
+					}
+				}
 			}
 			// printf("nRegistros %d\n", i);	
 			Ip * Busca = (Ip*)bsearch(iBrand[(*nRegistros)-1].pk, iPrimary, (*nRegistros), sizeof(Ip), Compara_iPrimary);
-			if(Busca != NULL)
+			
+			if(Busca != NULL){
 				Registro = Busca->rrn;
-			exibir_registro(Registro, 0);
+				//printf("Registro %d\n", Registro);
+				if(Registro != -1){
+					exibir_registro(Registro, 0);
+				}
+			}
 		break;
 
 		/*Lista por Preço com Desconto Aplicado*/
 		case 4:
 			for(int i = 0; i < (*nRegistros)-1; i++){
 				Ip * Busca = (Ip*)bsearch(iPrice[i].pk, iPrimary, *nRegistros, sizeof(Isf), Compara_iPrimary);
-					if(Busca != NULL)
-						Registro = Busca->rrn;
-				exibir_registro(Registro, 1);
-				printf("\n");		
+				
+				if(Busca != NULL){
+					Registro = Busca->rrn;
+					//printf("Registro %d\n", Registro);
+					if(Registro != -1){
+						exibir_registro(Registro, 1);
+						printf("\n");	
+					}
+				}	
+			
 			}
+			
 			Busca = (Ip*)bsearch(iPrice[(*nRegistros)-1].pk, iPrimary, (*nRegistros), sizeof(Isf), Compara_iPrimary);
-			if(Busca != NULL)
+			if(Busca != NULL){
 				Registro = Busca->rrn;
-			exibir_registro(Registro, 1);
+				//printf("Registro %d\n", Registro);					
+				if(Registro != -1){
+					exibir_registro(Registro, 1);
+				}
+			}
 		break;
 
 	}
@@ -1343,7 +1369,7 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 
 void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 
-	int PK[TAM_PRIMARY_KEY];
+	char PK[TAM_PRIMARY_KEY];
 
 	scanf("%[^\n]s", PK);
 	getchar();
@@ -1374,18 +1400,18 @@ void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 
 	int flag = 0;
 	
-	getchar();
-	scanf("%[^\n]s", &Desconto);
+	//getchar();
+	scanf("%[^\n]s", Desconto);
 	getchar();
 
 	if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
 		flag = 1;
 
 	while(flag = 0){	
-		printf(FALHA);
+		printf(CAMPO_INVALIDO);
 		
-		getchar();	
-		scanf("%[^\n]s", &Desconto);
+		//getchar();	
+		scanf("%[^\n]s", Desconto);
 		getchar();
 		
 		if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
@@ -1394,9 +1420,11 @@ void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 
 	char *Arquivo = ARQUIVO + RRN * 192;
 
-	int Tamanho = strlen(Arquivo);
+	// int Tamanho = strlen(Arquivo);
 
 	//int Auxiliar = 0;
+
+	// printf("%s\n", Arquivo);
 
 	int Contador = 0;
 	while(Contador < 5){
@@ -1407,27 +1435,45 @@ void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 		Arquivo++;
 	}
 
-	printf("Contador %d\n", Contador);
+	//printf("Contador %d\n", Contador);
 
-	printf("%s\n", Arquivo);
+	// printf("%s\n", Arquivo);
 
 	for(int i = 0; i < 3; i++){
-		Arquivo++;
 		*Arquivo = Desconto[i];
+		Arquivo++;
 	}
 
-	// float Preco;
-	// int DescontoAx;
+	/*Alterar Preço*/
+	int i;
+	for(i = 0; i < (*nRegistros)-1; i++){
+		if(iPrimary[i].rrn != -1 && strcmp(iPrimary[i].pk, PK)==0)
+			break;
+	}
 
-	//printf("%d\n", recuperar_registro(RRN).desconto);
-	// sscanf(recuperar_registro(RRN).desconto, "%d", &DescontoAux);
-	// sscanf(recuperar_registro(RRN).preco, "%f", &Preco);
 
-	//Preco = (Preco * (100-DescontoAx))/100.0;
-	// Preco = Preco * 100;
-	// Preco = (int)Preco/(float)100;
+}
 
-	// iPrice[RRN].price = Preco;
+void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
+
+	char PK[TAM_PRIMARY_KEY];
+
+	scanf("%[^\n]s", PK);
+	getchar();
+
+	Ip * Busca = (Ip*)bsearch(PK, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+
+	if(Busca == NULL){
+		printf(REGISTRO_N_ENCONTRADO);
+		return;
+	}
+
+	int RRN = Busca -> rrn;
+	//printf("%d\n", RRN);
+
+	char *Arquivo = ARQUIVO + RRN * 192;
+
+	printf(SUCESSO);
 
 }
 
