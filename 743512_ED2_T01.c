@@ -1536,6 +1536,35 @@ void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 
 }
 
+void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
+
+
+	for(int i = 0; i < (*nCat); i++){
+
+		ll * Anterior;
+		ll * Atual = iCategory[i].lista;
+		while(Atual != NULL){
+			Anterior = Atual;			
+			free(Anterior);
+			Atual = Atual->prox;
+		}
+		iCategory[i].lista = NULL;
+
+	}
+	free(iCategory);
+
+	free(iPrimary);
+
+	free(iProduct);
+
+	free(iBrand);
+
+	free(iPrice);
+
+	//nRegistros = 0;
+	*nCat = 0;
+}
+
 void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
 
 	int RRN = 0;
@@ -1569,44 +1598,11 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 
 	Desalocar(iPrimary, iProduct, iBrand, iCategory, iPrice, nRegistros, nCat);
 
+	//int *newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
+
  	//Criar_iPrimary(iPrimary, nRegistros);
 
 }
 
-void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
-
-	for(int i = 0; i < (*nCat); i++){
-
-		ll * Anterior;
-		ll * Atual = iCategory[i].lista;
-		while(Atual != NULL){
-			Anterior = Atual;			
-			free(Anterior);
-			Atual = Atual->prox;
-		}
-		iCategory[i].lista = NULL;
-
-	}
-	free(iCategory);
-
-	// for (int i = 0; i < *nRegistros; i++) {
-
-		// iPrimary = NULL;
-		// iProduct = NULL;
-		// iPrice = NULL;
-		// iBrand = NULL;
-
-	// }
-	free(iPrice);
-
-	free(iBrand);
-	
-	free(iProduct);
-	
-	free(iPrimary);
-
-	//nRegistros = 0;
-	*nCat = 0;
-}
 
 /* ---------------------------------------------- */
