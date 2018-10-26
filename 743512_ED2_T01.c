@@ -149,6 +149,10 @@ void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros);
 
 void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
 
+void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
+
+void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
+
 /*-----------------------Funções Auxiliares-----------------------*/
 
 
@@ -299,6 +303,7 @@ int main(){
 				Listar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros,  ncat);
 			break;
 			case 6:
+				Liberar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
 				/*libera espaço*/
 			break;
 			case 7:
@@ -1093,7 +1098,7 @@ void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros){
 
 	Ip * Busca = (Ip*)bsearch(pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
 
-	if(Busca == NULL)
+	if(Busca == NULL || Busca->rrn == -1)
 		printf(REGISTRO_N_ENCONTRADO);
 	
 	else{
@@ -1103,7 +1108,7 @@ void Busca_iPrimary(char *pk, Ip* iPrimary, int* nRegistros){
 		int Registro = Busca -> rrn;
 		
 		//Produto Auxiliar = recuperar_registro(Registro);
-		if(Registro != -1)
+		//if(Registro != -1)
 			exibir_registro(Registro, 0);
 	}	
 }
@@ -1128,8 +1133,8 @@ void Buscar_iProduct(char * Nome, Is* iProduct, int* nRegistros, Ip* iPrimary){
 
 	for (int i = 0; i < (*nRegistros); i++){
 		if(strcmp(Nome, iProduct[i].string) == 0){
-			flag = 1;
-			Busca_iPrimary(iProduct[i].pk, iPrimary, nRegistros);
+				Busca_iPrimary(iProduct[i].pk, iPrimary, nRegistros);
+				flag = 1;
 		}
 	}
 
@@ -1529,6 +1534,79 @@ void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 
 	printf(SUCESSO);
 
+}
+
+void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
+
+	int RRN = 0;
+
+	char Auxiliar[TAM_ARQUIVO];
+	Auxiliar[0] = '\0';
+
+	while(RRN < (*nRegistros)){
+
+		char Temporario[193];
+		Temporario[192] = '\0';
+		
+		char * Arquivo = ARQUIVO + RRN * 192;
+
+		if(*Arquivo != '*'){
+			strncpy(Temporario, ARQUIVO + ((RRN)*192), 192);
+			printf("Temporario %s\n", Temporario);
+		
+			strcat(Auxiliar, Temporario);	
+			
+		}
+		// else{
+		// 	printf("Item Removido\n");
+		// 	printf("RRN %d\n", RRN);
+		// }
+		RRN++;
+	}
+	
+	// printf("Auxiliar \n%s\n", Auxiliar);
+	strcpy(ARQUIVO, Auxiliar);
+
+	Desalocar(iPrimary, iProduct, iBrand, iCategory, iPrice, nRegistros, nCat);
+
+ 	//Criar_iPrimary(iPrimary, nRegistros);
+
+}
+
+void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
+
+	for(int i = 0; i < (*nCat); i++){
+
+		ll * Anterior;
+		ll * Atual = iCategory[i].lista;
+		while(Atual != NULL){
+			Anterior = Atual;			
+			free(Anterior);
+			Atual = Atual->prox;
+		}
+		iCategory[i].lista = NULL;
+
+	}
+	free(iCategory);
+
+	// for (int i = 0; i < *nRegistros; i++) {
+
+		// iPrimary = NULL;
+		// iProduct = NULL;
+		// iPrice = NULL;
+		// iBrand = NULL;
+
+	// }
+	free(iPrice);
+
+	free(iBrand);
+	
+	free(iProduct);
+	
+	free(iPrimary);
+
+	//nRegistros = 0;
+	*nCat = 0;
 }
 
 /* ---------------------------------------------- */
