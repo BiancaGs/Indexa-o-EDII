@@ -317,6 +317,7 @@ int main(){
 			break;
 			case 9:
 	      		/*Liberar memória e finalizar o programa */
+				Desalocar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
 				return 0;
 			break;
 			default:
@@ -1316,13 +1317,30 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 				ll * Atual = iCategory[i].lista;
 
 				while(Atual->prox != NULL){
-					Busca_iPrimary(Atual->pk, iPrimary, nRegistros);
-					printf("\n");
+					//Busca_iPrimary(Atual->pk, iPrimary, nRegistros);
+					Ip * Busca = (Ip*)bsearch(Atual->pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+					if(Busca != NULL){
+						int Registro = Busca->rrn;
+						if(Registro != -1){
+							exibir_registro(Registro,0);
+							printf("\n");
+						}
+					}
+					
 					Atual = Atual->prox;
 				}
-				Busca_iPrimary(Atual->pk, iPrimary, nRegistros);
-			}
-		break;		
+				//Busca_iPrimary(Atual->pk, iPrimary, nRegistros);
+				Ip * Busca = (Ip*)bsearch(Atual->pk, iPrimary, *nRegistros, sizeof(Ip), Compara_iPrimary);
+					if(Busca != NULL){
+						int Registro = Busca->rrn;
+						if(Registro != -1){
+							exibir_registro(Registro,0);
+							//printf("\n");
+						}
+					}
+				}
+		break;
+
 		/*Lista por Marca*/
 		case 3:
 			for( i = 0; i < (*nRegistros)-1; i++){
@@ -1598,11 +1616,20 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 
 	Desalocar(iPrimary, iProduct, iBrand, iCategory, iPrice, nRegistros, nCat);
 
-	//int *newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
+	int newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
 
- 	//Criar_iPrimary(iPrimary, nRegistros);
+	*nRegistros = newRegistros;
+
+ 	Criar_iPrimary(iPrimary, nRegistros);
+	
+	Criar_iProduct(iProduct, nRegistros);
+
+	Criar_iBrand(iBrand, nRegistros);
+
+	Criar_iPrice(iPrice, nRegistros);
+
+	Criar_iCategory(iCategory, nRegistros, nCat);
 
 }
-
 
 /* ---------------------------------------------- */
