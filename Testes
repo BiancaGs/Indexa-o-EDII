@@ -1,0 +1,142 @@
+/********** SEM ARQUIVO **********/
+
+(./A < Casos/0.in) > A.out  ----    OK
+diff A.out Casos/0.out
+
+
+(./A < Casos/1.in) > A.out  ----    OK
+diff A.out Casos/1.out
+
+(./A < Casos/2.in) > A.out  ----    OK
+diff A.out Casos/2.out
+
+(./A < Casos/3.in) > A.out  ----    OK
+diff A.out Casos/3.out
+
+(./A < Casos/4.in) > A.out  ----    OK
+diff A.out Casos/4.out
+
+(./A < Casos/5.in) > A.out  ----    OK
+diff A.out Casos/5.out
+
+(./A < Casos/6.in) > A.out  ----    OK
+diff A.out Casos/6.out
+
+(./A < Casos/7.in) > A.out  ----    OK
+diff A.out Casos/7.out
+
+(./A < Casos/8.in) > A.out  ----    OK
+diff A.out Casos/8.out           
+
+(./A < Casos/9.in) > A.out  ----    OK
+diff A.out Casos/9.out
+
+
+
+(./A < Casos/10.in) > A.out
+diff A.out Casos/10.out
+----    Segmentation Fault:     #0  __strcpy_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcpy-sse2-unaligned.S:298
+                                #1  0x000000000040107b in recuperar_registro (rrn=-1) at 743512_ED2_T01.c:400
+                                #2  0x0000000000403411 in Alterar (iPrimary=0x635270, iPrice=0x657d10, nRegistros=0x7fffffffd5f0)
+                                    at 743512_ED2_T01.c:1502
+                                #3  0x0000000000400c45 in main () at 743512_ED2_T01.c:275
+----    Alterar que retorne Busca de RRN = -1 deve imprimir printf(REGISTRO_N_ENCONTRADO)
+
+
+
+/********** COM ARQUIVO **********/
+
+(./A < Casos/11.in) > A.out ----    OK
+diff A.out Casos/11.out
+
+(./A < Casos/11.in) > A.out ----    OK
+diff A.out Casos/11.out
+
+(./A < Casos/12.in) > A.out 
+diff A.out Casos/12.out
+----    \n busca por NOME (4, 2, MEMORIA RAM 8GB 2400MHZ DDR4): linha 79 do 12.in
+
+(./A < Casos/13.in) > A.out 
+diff A.out Casos/13.out
+----    \n busca por NOME e por MARCA/CATEGORIA
+
+(./A < Casos/14.in) > A.out 
+diff A.out Casos/14.out
+----    \n busca por NOME e por MARCA/CATEGORIA
+
+(./A < Casos/15.in) > A.out 
+diff A.out Casos/15.out
+----    \n busca por NOME e por MARCA/CATEGORIA
+
+(./A < Casos/16.in) > A.out 
+diff A.out Casos/16.out
+----    Segmentation Fault:     #0  __strcmp_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcmp-sse2-unaligned.S:31
+                                #1  0x0000000000402659 in Inserir (Novo=0x7fffffffd520, iPrimary=0x635270, iProduct=0x639100, 
+                                    iBrand=0x648340, iCategory=0x657580, iPrice=0x658010, nRegistros=0x7fffffffd5f0, 
+                                    nCat=0x7fffffffd5ec) at 743512_ED2_T01.c:1051
+                                #2  0x0000000000400c1b in main () at 743512_ED2_T01.c:269
+
+(./A < Casos/17.in) > A.out 
+diff A.out Casos/17.out
+----    Segmentation Fault:     #0  __strcmp_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcmp-sse2-unaligned.S:31
+                                #1  0x0000000000402659 in Inserir (Novo=0x7fffffffd520, iPrimary=0x635270, iProduct=0x639100, 
+                                    iBrand=0x648340, iCategory=0x657580, iPrice=0x657e70, nRegistros=0x7fffffffd5f0, 
+                                    nCat=0x7fffffffd5ec) at 743512_ED2_T01.c:1051
+                                #2  0x0000000000400c1b in main () at 743512_ED2_T01.c:269
+
+
+(./A < Casos/18.in) > A.out 
+diff A.out Casos/18.out
+----    Segmentation Fault:     #0  __strcmp_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcmp-sse2-unaligned.S:31
+                                #1  0x0000000000402659 in Inserir (Novo=0x7fffffffd520, iPrimary=0x635270, iProduct=0x639100, 
+                                    iBrand=0x648340, iCategory=0x657580, iPrice=0x657e70, nRegistros=0x7fffffffd5f0, 
+                                    nCat=0x7fffffffd5ec) at 743512_ED2_T01.c:1051
+                                #2  0x0000000000400c1b in main () at 743512_ED2_T01.c:269
+
+(./A < Casos/19.in) > A.out 
+diff A.out Casos/19.out
+----    Segmentation Fault:     #0  __strcpy_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcpy-sse2-unaligned.S:298
+                                #1  0x000000000040107b in recuperar_registro (rrn=-1) at 743512_ED2_T01.c:400
+                                #2  0x0000000000403411 in Alterar (iPrimary=0x635270, iPrice=0x657f50, nRegistros=0x7fffffffd5f0)
+                                    at 743512_ED2_T01.c:1502
+                                #3  0x0000000000400c45 in main () at 743512_ED2_T01.c:275
+----    Alterar que retorne Busca de RRN = -1 deve imprimir printf(REGISTRO_N_ENCONTRADO)
+
+(./A < Casos/20.in) > A.out 
+diff A.out Casos/20.out
+----    Segmentation Fault:     #0  __strcpy_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcpy-sse2-unaligned.S:298
+                                #1  0x000000000040107b in recuperar_registro (rrn=-1) at 743512_ED2_T01.c:400
+                                #2  0x0000000000403411 in Alterar (iPrimary=0x635270, iPrice=0x657f50, nRegistros=0x7fffffffd5f0)
+                                    at 743512_ED2_T01.c:1502
+                                #3  0x0000000000400c45 in main () at 743512_ED2_T01.c:275
+----    Alterar que retorne Busca de RRN = -1 deve imprimir printf(REGISTRO_N_ENCONTRADO)
+
+(./A < Casos/21.in) > A.out ----    OK 
+diff A.out Casos/21.out 
+
+(./A < Casos/22.in) > A.out ----    OK 
+diff A.out Casos/22.out
+
+(./A < Casos/23.in) > A.out ----    OK
+diff A.out Casos/23.out
+
+
+(./A < Casos/24.in) > A.out ----    OK 
+diff A.out Casos/24.out
+
+(./A < Casos/25.in) > A.out 
+diff A.out Casos/25.out
+----    Buscar (e listar) que nao encontre nenhum produto deve imprimir printf(REGISTRO_N_ENCONTRADO)
+----    \n busca por MARCA/CATEGORIA
+
+(./A < Casos/26.in) > A.out 
+diff A.out Casos/26.out
+----    Segmentation Fault:     #0  __GI___libc_free (mem=0x21) at malloc.c:3101
+                                #1  0x0000000000403623 in Desalocar (iPrimary=0x635270, iProduct=0x639100, iBrand=0x648340, 
+                                    iCategory=0x657580, iPrice=0x657d10, nRegistros=0x7fffffffd5f0, nCat=0x7fffffffd5ec)
+                                    at 743512_ED2_T01.c:1575
+                                #2  0x00000000004037c6 in Liberar (iPrimary=0x635270, iProduct=0x639100, iBrand=0x648340, 
+                                    iCategory=0x657580, iPrice=0x657d10, nRegistros=0x7fffffffd5f0, nCat=0x7fffffffd5ec)
+                                    at 743512_ED2_T01.c:1626
+                                #3  0x0000000000400d1f in main () at 743512_ED2_T01.c:306
+----    Tenta fazer o Atual ir para o Atual->prox antes de dar free no Anterior
