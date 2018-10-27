@@ -293,7 +293,7 @@ int main(){
 			break;
 			case 9:
 	      		/*Liberar memória e finalizar o programa */
-				Desalocar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
+				//Desalocar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
 				return 0;
 			break;
 			default:
@@ -1083,10 +1083,15 @@ void Buscar_iProduct(char * Nome, Is* iProduct, int* nRegistros, Ip* iPrimary){
 
 	int flag = 0;
 
+	int Contador = 0;
+
 	for (int i = 0; i < (*nRegistros); i++){
 		if(strcmp(Nome, iProduct[i].string) == 0){
 				Busca_iPrimary(iProduct[i].pk, iPrimary, nRegistros);
 				flag = 1;
+				Contador++;
+				if(Contador > 1)
+					printf("\n");
 		}
 	}
 
@@ -1379,108 +1384,90 @@ void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 		printf(FALHA);
 		return;
 	}
+	else{
+		int RRN = Busca -> rrn;
 
-	int RRN = Busca -> rrn;
-
-	//printf("%d\n", RRN);
-	// printf("%s\n", Busca->pk);
-	
-	//O desconto inserido precisa ser de 3 bytes com valor entre 000 e 100.
-	char Desconto[3];
-	
-	int flag = 0;
-	
-	/* Existem três possíveis RESULTADOS(int) que a função STRCMP( , ) pode retornar:
-		<0 - Indica que o PRIMEIRO parâmetro é MENOR que SEGUNDO
-		0  - Indica que os parâmentros são IGUAIS
-		>0 - Indice que o PRIMEIRO parâmentro é MAIOR que o SEGUNDO parâmentro
-	
-		Além disso, é importante ressaltar que função receber dois parâmentro CONST CHAR*
-	*/
-	
-	//getchar();
-	scanf("%[^\n]s", Desconto);
-	getchar();
-
-	if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
-		flag = 1;
-
-	while(flag == 0){	
-		printf(CAMPO_INVALIDO);
-
-		//getchar();	
+		//printf("%d\n", RRN);
+		// printf("%s\n", Busca->pk);
+		
+		//O desconto inserido precisa ser de 3 bytes com valor entre 000 e 100.
+		char Desconto[3];
+		
+		int flag = 0;
+				
+		//getchar();
 		scanf("%[^\n]s", Desconto);
 		getchar();
-		
+
 		if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
 			flag = 1;
-	}
 
-	// printf("RRN %d\n", RRN);
+		while(flag == 0){	
+			printf(CAMPO_INVALIDO);
 
-	char *Arquivo = ARQUIVO + RRN * 192;
-
-	// int Tamanho = strlen(Arquivo);
-
-	// int Auxiliar = 0;
-
-	// printf("%s\n", Arquivo);
-
-	int Contador = 0;
-	while(Contador < 5){
-		if((*Arquivo) == '@')
-			Contador++;
+			//getchar();	
+			scanf("%[^\n]s", Desconto);
+			getchar();
 			
-		//Auxiliar++;
-		Arquivo++;
-	}
+			if(strcmp(Desconto, "000") >= 0 && strcmp(Desconto, "100") <= 0)
+				flag = 1;
+		}
 
-	//printf("Contador %d\n", Contador);
+		// printf("RRN %d\n", RRN);
 
-	// printf("%s\n", Arquivo);
+		char *Arquivo = ARQUIVO + RRN * 192;
 
-	for(int i = 0; i < 3; i++){
-		*Arquivo = Desconto[i];
-		Arquivo++;
-	}
+		// printf("%s\n", Arquivo);
 
-	float Preco;
+		int Contador = 0;
+		while(Contador < 5){
+			if((*Arquivo) == '@')
+				Contador++;
+			Arquivo++;
+		}
+
+		//printf("Contador %d\n", Contador);
+		// printf("%s\n", Arquivo);
+
+		for(int i = 0; i < 3; i++){
+			*Arquivo = Desconto[i];
+			Arquivo++;
+		}
+
+		float Preco;
+		
+		int Desct;
+		
+		/*Alterar Preço*/
+		int i;
+		for(i = 0; i < (*nRegistros); i++){
 	
-	int Desct;
-	
-	/*Alterar Preço*/
-	int i;
-	for(i = 0; i < (*nRegistros); i++){
-		
-		// printf("i %d\n", i);
-		
-		// printf("%s\n", iPrice[i].pk);
-		
-		if(strcmp(Busca->pk, iPrice[i].pk)==0){
-
-			sscanf(Desconto, "%d", &Desct);
-
-			//printf("%d\n", Desct);
-
-			sscanf(recuperar_registro(RRN).preco, "%f", &Preco);
+			// printf("%s\n", iPrice[i].pk);
 			
-			//Preco = iPrice[i].price;
-			//printf("%f\n", Preco);
+			if(strcmp(Busca->pk, iPrice[i].pk)==0){
 
-			Preco = (Preco * (100-Desct))/100.0;
-			Preco = Preco * 100;
-			Preco = (int)Preco/(float)100;
+				sscanf(Desconto, "%d", &Desct);
 
-			//printf("%f\n", Preco);
+				sscanf(recuperar_registro(RRN).preco, "%f", &Preco);
+				
+				//Preco = iPrice[i].price;
+				//printf("%f\n", Preco);
 
-			iPrice[i].price = Preco;
+				Preco = (Preco * (100-Desct))/100.0;
+				Preco = Preco * 100;
+				Preco = (int)Preco/(float)100;
 
-			qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
+				//printf("%f\n", Preco);
 
-			printf(SUCESSO);
-			
-			return;
-		}		
+				iPrice[i].price = Preco;
+
+				qsort(iPrice, *nRegistros, sizeof(Isf), Compara_iPrice);
+
+				printf(SUCESSO);
+				
+				return;
+			}		
+		}
 	}
 }
 
@@ -1504,13 +1491,6 @@ void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 	//printf("%d\n", RRN);
 
 	Busca->rrn = -1;
-
-	// for(int i = 0; i < (*nRegistros); i++){
-	
-	// 	if(strcmp(Busca->pk, iPrimary[i].pk)==0){
-	// 		iPrimary[i].rrn = -1;
-	// 	}
-	// }
 
 	char *Arquivo = ARQUIVO + RRN * 192;
 
@@ -1543,7 +1523,6 @@ void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPric
 	}
 	free(iCategory);
 	
-	*nCat = 0;
 
 	free(iPrimary);
 
@@ -1553,6 +1532,7 @@ void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPric
 
 	free(iPrice);
 
+	*nCat = 0;
 	//nRegistros = 0;
 }
 
@@ -1562,6 +1542,8 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 
 	char Auxiliar[TAM_ARQUIVO];
 	Auxiliar[0] = '\0';
+
+	int flag = 0;
 
 	while(RRN < (*nRegistros)){
 
@@ -1576,6 +1558,7 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 		
 			strcat(Auxiliar, Temporario);	
 			
+			flag = 1;
 		}
 		// else{
 		// 	printf("Item Removido\n");
@@ -1585,55 +1568,58 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 	}
 	
 	// printf("Auxiliar \n%s\n", Auxiliar);
-	strcpy(ARQUIVO, Auxiliar);
+	if(flag == 0){
+		
+		strcpy(ARQUIVO, Auxiliar);
 
-	Desalocar(iPrimary, iProduct, iBrand, iCategory, iPrice, nRegistros, nCat);
+		Desalocar(iPrimary, iProduct, iBrand, iCategory, iPrice, nRegistros, nCat);
 
-	int newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
+		int newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
 
-	*nRegistros = newRegistros;
+		*nRegistros = newRegistros;
 
-	/* Índice primário */
-	iPrimary = (Ip *) malloc (MAX_REGISTROS * sizeof(Ip));
-  	if (!iPrimary) {
-		perror(MEMORIA_INSUFICIENTE);
-		exit(1);
+		/* Índice primário */
+		iPrimary = (Ip *) malloc (MAX_REGISTROS * sizeof(Ip));
+		if (!iPrimary) {
+			perror(MEMORIA_INSUFICIENTE);
+			exit(1);
+		}
+
+		Criar_iPrimary(iPrimary, nRegistros);
+
+		iProduct = (Is*) malloc (MAX_REGISTROS * sizeof(Is)); 
+		if (!iProduct) {
+			perror(MEMORIA_INSUFICIENTE);
+			exit(1);
+		}
+
+		Criar_iProduct(iProduct, nRegistros);
+
+		iBrand = (Is*) malloc (MAX_REGISTROS * sizeof(Is));
+		if (!iBrand) {
+			perror(MEMORIA_INSUFICIENTE);
+			exit(1);
+		}
+
+		Criar_iBrand(iBrand, nRegistros);
+		
+		// Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
+		iCategory = (Ir*) malloc (MAX_CATEGORIAS * sizeof(Ir));
+		if (!iCategory) {
+			perror(MEMORIA_INSUFICIENTE);
+			exit(1);
+		}
+
+		Criar_iCategory(iCategory, nRegistros, nCat);
+		
+		iPrice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
+		if (!iPrice) {
+			perror(MEMORIA_INSUFICIENTE);
+			exit(1);
+		}
+
+		Criar_iPrice(iPrice, nRegistros);
 	}
-
-	Criar_iPrimary(iPrimary, nRegistros);
-
-	iProduct = (Is*) malloc (MAX_REGISTROS * sizeof(Is)); 
-	if (!iProduct) {
-		perror(MEMORIA_INSUFICIENTE);
-		exit(1);
-	}
-
-	Criar_iProduct(iProduct, nRegistros);
-
-	iBrand = (Is*) malloc (MAX_REGISTROS * sizeof(Is));
-  	if (!iBrand) {
-		perror(MEMORIA_INSUFICIENTE);
-		exit(1);
-	}
-
-	Criar_iBrand(iBrand, nRegistros);
-	
-	// Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
-	iCategory = (Ir*) malloc (MAX_CATEGORIAS * sizeof(Ir));
-	if (!iCategory) {
-		perror(MEMORIA_INSUFICIENTE);
-		exit(1);
-	}
-
-	Criar_iCategory(iCategory, nRegistros, nCat);
-	
-	iPrice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
-	if (!iPrice) {
-		perror(MEMORIA_INSUFICIENTE);
-		exit(1);
-	}
-
-	Criar_iPrice(iPrice, nRegistros);
 }
 
 /* ---------------------------------------------- */
