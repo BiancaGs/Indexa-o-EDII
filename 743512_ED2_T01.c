@@ -279,8 +279,53 @@ int main(){
 				Listar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros,  ncat);
 			break;
 			case 6:
-				Liberar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
 				/*libera espaço*/
+				Liberar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
+			
+				Desalocar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
+
+				/* Índice primário */
+				iprimary = (Ip *) malloc (MAX_REGISTROS * sizeof(Ip));
+				if (!iprimary) {
+					perror(MEMORIA_INSUFICIENTE);
+					exit(1);
+				}
+
+				Criar_iPrimary(iprimary, &nregistros);
+
+				iproduct = (Is*) malloc (MAX_REGISTROS * sizeof(Is)); 
+				if (!iproduct) {
+					perror(MEMORIA_INSUFICIENTE);
+					exit(1);
+				}
+
+				Criar_iProduct(iproduct, &nregistros);
+
+				ibrand = (Is*) malloc (MAX_REGISTROS * sizeof(Is));
+				if (!ibrand) {
+					perror(MEMORIA_INSUFICIENTE);
+					exit(1);
+				}
+
+				Criar_iBrand(ibrand, &nregistros);
+				
+				// Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
+				icategory = (Ir*) malloc (MAX_CATEGORIAS * sizeof(Ir));
+				if (!icategory) {
+					perror(MEMORIA_INSUFICIENTE);
+					exit(1);
+				}
+
+				Criar_iCategory(icategory, &nregistros, &ncat);
+				
+				iprice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
+				if (!iprice) {
+					perror(MEMORIA_INSUFICIENTE);
+					exit(1);
+				}
+
+				Criar_iPrice(iprice, &nregistros);
+
 			break;
 			case 7:
 				/*imprime o arquivo de dados*/
@@ -296,7 +341,7 @@ int main(){
 			break;
 			case 9:
 	      		/*Liberar memória e finalizar o programa */
-				//Desalocar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
+				Desalocar(iprimary, iproduct, ibrand, icategory, iprice, &nregistros, &ncat);
 				return 0;
 			break;
 			default:
@@ -738,8 +783,8 @@ void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
 			//A função Verifica_iCategory retorna o ÍNDICE da CATEGORIA, caso ela já exista, em que preciso inserir o CÓDIGO do PRODUTO.
 			Indice = Verifica_iCategory(Cat, iCategory, nCat);
 
-			ll * New = (ll*)malloc(sizeof(ll));
-			strcpy(New->pk,Auxiliar.pk);
+			// ll * New = (ll*)malloc(sizeof(ll));
+			// strcpy(New->pk,Auxiliar.pk);
 
 			if(Indice == -1){
 				//A CATEGORIA ainda não existe, então ADICIONAMOS.
@@ -748,8 +793,8 @@ void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
 				//Por conseguinte precisamos adicionar o PRODUTO na lista da CATEGORIA.
 
 				//Lista Vazia
-				// ll * New = (ll*)malloc(sizeof(ll));
-				// strcpy(New->pk,Auxiliar.pk);
+				ll * New = (ll*)malloc(sizeof(ll));
+				strcpy(New->pk,Auxiliar.pk);
 
 				New->prox = NULL;
 				iCategory[nCatAx].lista = New;
@@ -764,8 +809,8 @@ void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
 				int flag = 0;
 
 				if(flag == 0 && strcmp(iCategory[Indice].lista->pk, Auxiliar.pk) > 0){
-					// ll * New = (ll*)malloc(sizeof(ll));
-					// strcpy(New->pk,Auxiliar.pk);
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Auxiliar.pk);
 					New->prox = iCategory[Indice].lista;
 					iCategory[Indice].lista = New;
 					flag = 1;
@@ -781,19 +826,19 @@ void Criar_iCategory (Ir* iCategory, int* nRegistros, int* nCat){
 					Atual = Atual->prox;
 				}
 
-				// ll * New = (ll*)malloc(sizeof(ll));
-				// strcpy(New->pk,Auxiliar.pk);
 						
-				if(flag == 0 && Anterior != NULL && strcmp(Atual->pk, New->pk) > 0){
+				if(flag == 0 && Anterior != NULL && strcmp(Atual->pk, Auxiliar.pk) > 0){
+					ll * New = (ll*)malloc(sizeof(ll));
+					strcpy(New->pk,Auxiliar.pk);
 					New->prox = Atual;
 					Anterior->prox = New;
 					flag = 1;
 				}
 				
 				if(flag == 0 && strcmp(Atual->pk, Auxiliar.pk) < 0){
-					// ll * New = (ll*)malloc(sizeof(ll));
+					ll * New = (ll*)malloc(sizeof(ll));
 					// //printf("%s\n", Atual->pk);
-					// strcpy(New->pk,Auxiliar.pk);
+					strcpy(New->pk,Auxiliar.pk);
 					Atual->prox = New;
 					New->prox = NULL;
 					flag = 1;
@@ -879,13 +924,10 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 				rAuxiliar[i] = '#';
 
 			strcat(ARQUIVO, rAuxiliar);
-	
-			/*Posição no ARQUIVO - Posição dos Índice*/
-			int RRN = (*nRegistros);
 
 			/*---------iPrimary-----------*/
 			int Indice = Busca - iPrimary;
-			iPrimary[Indice].rrn = RRN;
+			iPrimary[Indice].rrn = (*nRegistros);
 			/* -------------------- */	
 			return;
 		}
@@ -1054,10 +1096,10 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 					Atual = Atual->prox;
 				}
 
-				ll * New = (ll*)malloc(sizeof(ll));
-				strcpy(New->pk,Novo->pk);
 						
-				if(flag == 0 && Anterior != NULL && strcmp(Atual->pk, New->pk) > 0){
+				if(flag == 0 && Anterior != NULL && strcmp(Atual->pk, Novo->pk) > 0){
+					ll * New = (ll*)malloc(sizeof(ll));	
+					strcpy(New->pk,Novo->pk);
 					New->prox = Atual;
 					Anterior->prox = New;
 					flag = 1;
@@ -1065,7 +1107,6 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 				
 				if(flag == 0 && strcmp(Atual->pk, Novo->pk) < 0){
 					ll * New = (ll*)malloc(sizeof(ll));
-					//printf("%s\n", Atual->pk);
 					strcpy(New->pk,Novo->pk);
 					Atual->prox = New;
 					New->prox = NULL;
@@ -1537,6 +1578,13 @@ void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 
 void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
 
+	free(iPrice);
+
+	free(iBrand);
+	
+	free(iProduct);
+	
+	free(iPrimary);
 
 	for(int i = 0; i < (*nCat); i++){
 
@@ -1544,8 +1592,8 @@ void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPric
 		ll * Atual = iCategory[i].lista;
 		while(Atual != NULL){
 			Anterior = Atual;			
-			free(Anterior);
 			Atual = Atual->prox;
+			free(Anterior);
 		}
 		iCategory[i].lista = NULL;
 
@@ -1553,13 +1601,6 @@ void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPric
 	free(iCategory);
 	
 
-	free(iPrimary);
-
-	free(iProduct);
-
-	free(iBrand);
-
-	free(iPrice);
 
 	*nCat = 0;
 	//nRegistros = 0;
@@ -1599,53 +1640,12 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 	// printf("Auxiliar \n%s\n", Auxiliar);
 		strcpy(ARQUIVO, Auxiliar);
 
-		Desalocar(iPrimary, iProduct, iBrand, iCategory, iPrice, nRegistros, nCat);
 
 		int newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
 
 		*nRegistros = newRegistros;
-
-		/* Índice primário */
-		iPrimary = (Ip *) malloc (MAX_REGISTROS * sizeof(Ip));
-		if (!iPrimary) {
-			perror(MEMORIA_INSUFICIENTE);
-			exit(1);
-		}
-
-		Criar_iPrimary(iPrimary, nRegistros);
-
-		iProduct = (Is*) malloc (MAX_REGISTROS * sizeof(Is)); 
-		if (!iProduct) {
-			perror(MEMORIA_INSUFICIENTE);
-			exit(1);
-		}
-
-		Criar_iProduct(iProduct, nRegistros);
-
-		iBrand = (Is*) malloc (MAX_REGISTROS * sizeof(Is));
-		if (!iBrand) {
-			perror(MEMORIA_INSUFICIENTE);
-			exit(1);
-		}
-
-		Criar_iBrand(iBrand, nRegistros);
 		
-		// Ir* icategory = (Ir*) malloc (MAX_REGISTROS * sizeof(Ir));
-		iCategory = (Ir*) malloc (MAX_CATEGORIAS * sizeof(Ir));
-		if (!iCategory) {
-			perror(MEMORIA_INSUFICIENTE);
-			exit(1);
-		}
-
-		Criar_iCategory(iCategory, nRegistros, nCat);
 		
-		iPrice = (Isf*) malloc (MAX_REGISTROS * sizeof(Isf));
-		if (!iPrice) {
-			perror(MEMORIA_INSUFICIENTE);
-			exit(1);
-		}
-
-		Criar_iPrice(iPrice, nRegistros);
 }
 
 /* ---------------------------------------------- */

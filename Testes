@@ -1,55 +1,60 @@
 /********** SEM ARQUIVO **********/
 
-(./A < Casos/0.in) > A.out  ----    OK
+----    OK
+(./A < Casos/0.in) > A.out  
 diff A.out Casos/0.out
 
 
-(./A < Casos/1.in) > A.out  ----    OK
+----    OK
+(./A < Casos/1.in) > A.out  
 diff A.out Casos/1.out
 
-(./A < Casos/2.in) > A.out  ----    OK
+----    OK
+(./A < Casos/2.in) > A.out  
 diff A.out Casos/2.out
 
-(./A < Casos/3.in) > A.out  ----    OK
+----    OK
+(./A < Casos/3.in) > A.out  
 diff A.out Casos/3.out
 
-(./A < Casos/4.in) > A.out  ----    OK
+----    OK
+(./A < Casos/4.in) > A.out  
 diff A.out Casos/4.out
 
-(./A < Casos/5.in) > A.out  ----    OK
+----    OK
+(./A < Casos/5.in) > A.out  
 diff A.out Casos/5.out
 
-(./A < Casos/6.in) > A.out  ----    OK
+----    OK
+(./A < Casos/6.in) > A.out  
 diff A.out Casos/6.out
 
-(./A < Casos/7.in) > A.out  ----    OK
+----    OK
+(./A < Casos/7.in) > A.out  
 diff A.out Casos/7.out
 
-(./A < Casos/8.in) > A.out  ----    OK
+----    OK
+(./A < Casos/8.in) > A.out  
 diff A.out Casos/8.out           
 
-(./A < Casos/9.in) > A.out  ----    OK
+----    OK
+(./A < Casos/9.in) > A.out  
 diff A.out Casos/9.out
 
-
-
+----    OK
 (./A < Casos/10.in) > A.out
 diff A.out Casos/10.out
-----    Segmentation Fault:     #0  __strcpy_sse2_unaligned () at ../sysdeps/x86_64/multiarch/strcpy-sse2-unaligned.S:298
-                                #1  0x000000000040107b in recuperar_registro (rrn=-1) at 743512_ED2_T01.c:400
-                                #2  0x0000000000403411 in Alterar (iPrimary=0x635270, iPrice=0x657d10, nRegistros=0x7fffffffd5f0)
-                                    at 743512_ED2_T01.c:1502
-                                #3  0x0000000000400c45 in main () at 743512_ED2_T01.c:275
-----    Alterar que retorne Busca de RRN = -1 deve imprimir printf(REGISTRO_N_ENCONTRADO)
 
 
 
 /********** COM ARQUIVO **********/
 
-(./A < Casos/11.in) > A.out ----    OK
+----    OK
+(./A < Casos/11.in) > A.out 
 diff A.out Casos/11.out
 
-(./A < Casos/11.in) > A.out ----    OK
+----    OK
+(./A < Casos/11.in) > A.out 
 diff A.out Casos/11.out
 
 (./A < Casos/12.in) > A.out 
@@ -111,17 +116,21 @@ diff A.out Casos/20.out
                                 #3  0x0000000000400c45 in main () at 743512_ED2_T01.c:275
 ----    Alterar que retorne Busca de RRN = -1 deve imprimir printf(REGISTRO_N_ENCONTRADO)
 
-(./A < Casos/21.in) > A.out ----    OK 
+----    OK
+(./A < Casos/21.in) > A.out  
 diff A.out Casos/21.out 
 
-(./A < Casos/22.in) > A.out ----    OK 
+----    OK
+(./A < Casos/22.in) > A.out  
 diff A.out Casos/22.out
 
-(./A < Casos/23.in) > A.out ----    OK
+----    OK
+(./A < Casos/23.in) > A.out 
 diff A.out Casos/23.out
 
 
-(./A < Casos/24.in) > A.out ----    OK 
+----    OK
+(./A < Casos/24.in) > A.out  
 diff A.out Casos/24.out
 
 (./A < Casos/25.in) > A.out 
