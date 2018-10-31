@@ -142,10 +142,13 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 /* Realiza três tipos de LISTAGEM, por CÓDIGO, CATEGORIA, MARCA e PREÇO com DESCONTO APLICADO*/
 void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int nCat);
 
+/* Recebe um PK e verifica se o PRODUTO existe, caso encontre solicita o novo valor de DESCONTO*/
 void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros);
 
+/* Recebe o PK do PRODUTO que o USUÁRIO deseja EXCLUIR. Verifica se o PRODUTO existe e se já não está marcado como excluido*/
 void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
 
+/*Remove os PRODUTOS marcados como excluidos*/
 void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
 
 void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat);
@@ -506,20 +509,6 @@ int Compara_iPrimary (const void * pCodigo, const void * sCodigo){
 
 	// printf("\nCOMPARAÇAO\n");
 
-	/* Primeiro Código*/
-	// char pCod[TAM_PRIMARY_KEY];
-	// strcpy(pCod,(*(Ip *)pCodigo).pk);
-
-	// printf("\nPrimeiro Código: %s\n", pCod);
-	
-	// /*Segundo Código*/
-	// char sCod[TAM_PRIMARY_KEY];
-	// strcpy(sCod, (*(Ip*)sCodigo).pk);
-
-	// printf("\nSegundo Código: %s\n", sCod);
-
-	// int Resultado = strcmp(pCod, sCod);
-
 	int Resultado = strcmp((*(Ip *)pCodigo).pk,  (*(Ip*)sCodigo).pk);
 	// printf("Resultado (Comparaçao): %d\n");
 	
@@ -552,22 +541,6 @@ void Criar_iPrimary(Ip *indice_primario, int * nregistros){
 /*A função responsável por COMPARAR as informações para a função QSORT, por definição recebe dois CONST VOID */
 /* A ORDENAÇÃO do iProduct será realizada incialmente pelo NOME DO PRODUTO (MODELO) e em caso de empate pelo CÓDIGO (ÍNDICE PRIMÁRIO) */
 int Compara_iProduct(const void * pNome , const void * sNome){
-
-	// printf("\nCOMPARAÇAO\n");
-
-	// /* Primeiro Nome*/
-	// char pN[TAM_NOME];
-	// strcpy(pN,(*(Is *)pNome).string);
-
-	// printf("\nPrimeiro: %s\n", pN);
-	
-	// /*Segundo Código*/
-	// char sN[TAM_NOME];
-	// strcpy(sN, (*(Is*)sNome).string);
-
-	// printf("\nSegundo: %s\n", sN);
-
-	// int Resultado = strcmp(pN, sN);
 
 	int Resultado = strcmp((*(Is *)pNome).string,(*(Is*)sNome).string);
 	// printf("Resultado (Comparaçao): %d\n");
@@ -691,29 +664,6 @@ void Criar_iPrice (Isf *iPrice, int * nRegistros){
 	for(int i = 0; i < (*nRegistros); i++){
 
 		strcpy(iPrice[i].pk, recuperar_registro(i).pk);
-
-		/*Preço Original do Produto*/
-		// float Preco = atof(recuperar_registro(i).preco);
-
-		// printf("Preço Original: %f\n", Preco );
-				
-		/* Desconto em Porcentagem*/
-		// float Desconto = (int)(recuperar_registro(i).desconto);
-		
-		// printf("Desconto: %f\n", Desconto);
-		//Desconto/=100;
-		// printf("Desconto: %f\n", Desconto);
-
-		/* Valor do Desconto*/
-		//float Valor_Desconto;
-		//Valor_Desconto = Preco * Desconto;
-
-		// printf("Valor do Desconto: %f\n", Valor_Desconto);
-
-		/*Aplicando o Valor do Desconto*/
-		//Preco-=Valor_Desconto;
-
-		// printf("Preço: %f\n", Preco);
 		
 		/*Monitoria*/
 
@@ -925,9 +875,11 @@ void Inserir(Produto* Novo, Ip *iPrimary, Is* iProduct, Is* iBrand, Ir* iCategor
 
 			strcat(ARQUIVO, rAuxiliar);
 
+			int RRN = (*nRegistros);
+
 			/*---------iPrimary-----------*/
 			int Indice = Busca - iPrimary;
-			iPrimary[Indice].rrn = (*nRegistros);
+			iPrimary[Indice].rrn = RRN;
 			/* -------------------- */	
 			return;
 		}
@@ -1188,7 +1140,7 @@ void Busca_iBrand(char * Marca, char * Categoria, Is* iBrand,  Ir* iCategory, in
 		return;
 	}
 	else{
-		
+		flag = 0;
 		for(iCat = 0; iCat < (*nRegistros); iCat++){
 			if(strcmp(Categoria, iCategory[iCat].cat) == 0){
 				flag = 1;
@@ -1202,18 +1154,22 @@ void Busca_iBrand(char * Marca, char * Categoria, Is* iBrand,  Ir* iCategory, in
 	}
 
 	int j = iMarca;
-
+	flag = 0;
 	while (strcmp(Marca, iBrand[j].string) == 0) {
 		
 		ll * Atual = iCategory[iCat].lista;
 		while(Atual != NULL){
 			if(strcmp(iBrand[j].pk, Atual->pk) == 0){
+				flag = 1;
 				Busca_iPrimary(iBrand[j].pk, iPrimary, nRegistros);
 			}
 			Atual = Atual->prox;
 		}
 		j++;
-
+	}
+	if(flag == 0){
+		printf(REGISTRO_N_ENCONTRADO);
+		return;
 	}
 }
 
@@ -1248,7 +1204,6 @@ void Busca_Produto(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, int* n
 			Busca_iPrimary(pk, iPrimary, nRegistros);
 		break;
 		
-		/*NÃO FUNCIONA*/
 		/*Busca por Nome do Produto ou Modelo*/
 		case 2:
 			getchar();
@@ -1440,6 +1395,8 @@ void Listar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, 
 	}
 }
 
+
+/* Recebe um PK e verifica se o PRODUTO existe, caso encontre solicita o novo valor de DESCONTO*/
 void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 
 	char PK[TAM_PRIMARY_KEY];
@@ -1541,6 +1498,7 @@ void Alterar(Ip *iPrimary, Isf * iPrice, int * nRegistros){
 	}
 }
 
+/* Recebe o PK do PRODUTO que o USUÁRIO deseja EXCLUIR. Verifica se o PRODUTO existe e se já não está marcado como excluido*/
 void Excluir(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
 
 	char PK[TAM_PRIMARY_KEY];
@@ -1606,6 +1564,7 @@ void Desalocar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPric
 	//nRegistros = 0;
 }
 
+/*Remove os PRODUTOS marcados como excluidos*/
 void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice, int* nRegistros, int* nCat){
 
 	int RRN = 0;
@@ -1644,8 +1603,7 @@ void Liberar(Ip* iPrimary, Is* iProduct, Is* iBrand, Ir* iCategory, Isf *iPrice,
 		int newRegistros = strlen(ARQUIVO)/TAM_REGISTRO;
 
 		*nRegistros = newRegistros;
-		
-		
+			
 }
 
 /* ---------------------------------------------- */
